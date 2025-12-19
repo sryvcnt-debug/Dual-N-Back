@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="Sistema de entrenamiento cognitivo basado en dual n-back para mejora de memoria de trabajo">
+    <meta name="author" content="Vicente Serey">
+    <title>Dual N-Back Cognitive Training System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-dark: #1e3c72;
+            --primary-mid: #2a5298;
+            --primary-light: #4a6fa5;
+            --accent-cyan: #00d2ff;
+            --accent-blue: #3a7bd5;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --error: #f44336;
+            --glass-bg: rgba(255, 255, 255, 0.97);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #2c3e50;
+            line-height: 1.6;
+            padding: 10px;
+            overflow-x: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        html {
+            height: -webkit-fill-available;
+        }
+
+        .app-container {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            box-shadow: var(--shadow-strong);
+            width: 100%;
+            max-width: 1100px;
+            height: 100%;
+            max-height: 95vh;
+            max-height: -webkit-fill-available;
+            padding: 1.5rem;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .home-btn-fixed {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 55px;
+            height: 55px;
+            min-width: 55px;
+            min-height: 55px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            z-index: 1000;
+            transition: transform 0.2s;
+            border: 3px solid white;
+            touch-action: manipulation;
+        }
+
+        .home-btn-fixed:active {
+            transform: scale(0.9);
+        }
+
+        .screen {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--primary-mid);
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            margin: 2rem 0 1rem;
+            border-bottom: 3px solid #e8eaf6;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--primary-light);
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            margin: 1.5rem 0 0.8rem;
+        }
+
+        h4 {
+            color: var(--primary-dark);
+            font-size: clamp(1rem, 2.5vw, 1.15rem);
+            margin: 1rem 0 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #4a4a4a;
+            text-align: justify;
+            line-height: 1.8;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .device-selection {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .device-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .device-subtitle {
+            color: #546e7a;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            margin-bottom: 3rem;
+        }
+
+        .device-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .device-card {
+            background: white;
+            padding: 2.5rem 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 4px solid transparent;
+            touch-action: manipulation;
+        }
+
+        .device-card:active {
+            transform: scale(0.95);
+            border-color: var(--accent-blue);
+        }
+
+        .device-card-icon {
+            font-size: clamp(4rem, 12vw, 6rem);
+            margin-bottom: 1rem;
+        }
+
+        .device-card-title {
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .device-card-desc {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            color: #666;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            min-height: 54px;
+            border-radius: 12px;
+            font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(58, 123, 213, 0.3);
+            width: 100%;
+            margin: 5px 0;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            background: #eceff1;
+            color: #37474f;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53935 0%, #d32f2f 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin: 1rem 0;
+        }
+
+        .main-action-btn {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            color: white;
+            border: none;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            box-shadow: 0 8px 24px rgba(67, 160, 71, 0.4);
+            width: 100%;
+            margin: 2rem 0;
+            touch-action: manipulation;
+            min-height: 180px;
+        }
+
+        .main-action-btn:active {
+            transform: scale(0.97);
+        }
+
+        .main-action-btn .icon {
+            font-size: clamp(3.5rem, 10vw, 5rem);
+        }
+
+        .main-action-btn .text {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .main-action-btn .subtext {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .menu-card {
+            background: white;
+            padding: 1.8rem 1rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            touch-action: manipulation;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .menu-card:active {
+            transform: scale(0.95);
+            border-color: var(--accent-blue);
+        }
+
+        .menu-card-icon {
+            font-size: clamp(2.5rem, 7vw, 3.2rem);
+            margin-bottom: 0.8rem;
+        }
+
+        .menu-card-title {
+            font-size: clamp(1rem, 2.8vw, 1.15rem);
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-card-desc {
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            color: #666;
+        }
+
+        .realtime-score {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .score-value.hits {
+            color: var(--success);
+        }
+
+        .score-value.errors {
+            color: var(--error);
+        }
+
+        .score-label {
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+        }
+
+        .mode-badge {
+            display: inline-block;
+            background: var(--warning);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            margin-left: 10px;
+        }
+
+        .mode-badge.fast {
+            background: #e53935;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .latency-display {
+            text-align: center;
+            margin: 0.5rem 0;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #666;
+            font-weight: 600;
+        }
+
+        .stimulus-display {
+            font-size: clamp(3.5rem, 15vw, 5rem);
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-align: center;
+            min-height: clamp(90px, 22vw, 140px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            background: linear-gradient(135deg, #e8eaf6 0%, #c5cae9 100%);
+            border-radius: 16px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+            letter-spacing: 0.1em;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 7px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, #66bb6a 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: clamp(10px, 2.5vw, 14px);
+            max-width: 420px;
+            margin: 0 auto 1.5rem;
+            padding: clamp(14px, 3.5vw, 22px);
+            background: #f5f7fa;
+            border-radius: 16px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .grid-cell {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(2rem, 6vw, 3rem);
+            font-weight: bold;
+            color: var(--primary-mid);
+            transition: all 0.25s;
+            border: 3px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .grid-cell.active {
+            background: linear-gradient(135deg, #3f51b5 0%, #5c6bc0 100%);
+            color: white;
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(63, 81, 181, 0.6);
+            border-color: var(--accent-cyan);
+        }
+
+        .mobile-controls {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            margin: 1.5rem 0;
+            padding: 0 10px;
+        }
+
+        .mobile-controls.active {
+            display: flex;
+        }
+
+        .mobile-touch-btn {
+            width: 100%;
+            min-height: 90px;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .mobile-touch-btn .icon {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+        }
+
+        .desktop-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .desktop-controls.hidden {
+            display: none;
+        }
+
+        .feedback-btn {
+            min-width: clamp(160px, 45vw, 220px);
+            min-height: 70px;
+            font-size: clamp(1rem, 2.8vw, 1.15rem);
+        }
+
+        .feedback-btn.matched {
+            background: var(--success) !important;
+            animation: btnPulse 0.4s ease;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .mode-option {
+            padding: 1.8rem 1rem;
+            border: 3px solid #e0e0e0;
+            border-radius: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            touch-action: manipulation;
+            min-height: 140px;
+        }
+
+        .mode-option.selected {
+            border-color: var(--accent-blue);
+            background: linear-gradient(135deg, rgba(58,123,213,0.1), rgba(0,210,255,0.1));
+        }
+
+        .mode-option:active {
+            transform: scale(0.95);
+        }
+
+        .mode-icon {
+            font-size: clamp(2.5rem, 8vw, 3rem);
+            margin-bottom: 0.8rem;
+        }
+
+        .mode-title {
+            font-weight: 700;
+            font-size: clamp(1rem, 3vw, 1.15rem);
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .mode-desc {
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            color: #666;
+        }
+
+        .philosophical-quote {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-style: italic;
+            font-size: clamp(0.95rem, 2.3vw, 1.05rem);
+            text-align: justify;
+            color: #263238;
+            padding: 2rem clamp(1rem, 3vw, 2rem);
+            background: linear-gradient(135deg, rgba(58,123,213,0.08) 0%, rgba(0,210,255,0.08) 100%);
+            border-radius: 16px;
+            margin: 2rem 0;
+            position: relative;
+            line-height: 1.95;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .philosophical-quote::before {
+            content: '"';
+            font-size: clamp(4rem, 10vw, 6rem);
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            opacity: 0.15;
+            color: var(--accent-blue);
+        }
+
+        .academic-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--accent-blue);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            line-height: 1.8;
+        }
+
+        .adhd-highlight {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left-color: #ff9800;
+            border: 2px solid #ff9800;
+            border-radius: 8px;
+        }
+
+        .citation {
+            font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+            color: #666;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+            font-style: italic;
+        }
+
+        .reference-list {
+            margin-left: 2rem;
+            text-indent: -2rem;
+            margin-bottom: 0.8rem;
+            font-size: clamp(0.8rem, 1.9vw, 0.88rem);
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem 1rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: clamp(2rem, 6vw, 2.8rem);
+            font-weight: 800;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: clamp(0.75rem, 2vw, 0.9rem);
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            height: clamp(250px, 50vw, 350px);
+            width: 100%;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .feedback-message {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .feedback-excellent {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 2px solid #4caf50;
+        }
+
+        .feedback-good {
+            background: #fff3e0;
+            color: #e65100;
+            border: 2px solid #ff9800;
+        }
+
+        .feedback-improve {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #f44336;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        thead {
+            background: #f5f7fa;
+        }
+
+        th, td {
+            padding: clamp(10px, 2.5vw, 14px);
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+        }
+
+        th {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 1rem;
+                border-radius: 16px;
+            }
+
+            .home-btn-fixed {
+                top: 10px;
+                right: 10px;
+                width: 50px;
+                height: 50px;
+                min-width: 50px;
+                min-height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .device-options {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-container {
+                max-width: 100%;
+            }
+
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 0.8rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+        }
+
+        @supports (padding: max(0px)) {
+            .app-container {
+                padding-left: max(1.5rem, env(safe-area-inset-left));
+                padding-right: max(1.5rem, env(safe-area-inset-right));
+                padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+            }
+        }
+
+        .app-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .app-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .app-container::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="home-btn-fixed" onclick="app.goHome()" title="Menú Principal">
+        🏠
+    </div>
+
+    <div class="app-container">
+        
+        <!-- DEVICE SELECTION SCREEN -->
+        <div id="screen-device-select" class="screen active">
+            <div class="device-selection">
+                <h1 class="device-title">🧠 Dual N-Back</h1>
+                <p class="device-subtitle">Sistema de Entrenamiento de Memoria de Trabajo</p>
+                <p style="font-size: clamp(0.9rem, 2vw, 1rem); color: #666; margin-bottom: 2rem;">
+                    Selecciona tu tipo de dispositivo para optimizar la interfaz
+                </p>
+                
+                <div class="device-options">
+                    <div class="device-card" onclick="app.selectDevice('desktop')">
+                        <div class="device-card-icon">💻</div>
+                        <div class="device-card-title">Computador</div>
+                        <div class="device-card-desc">Control con teclado (▲▼)</div>
+                    </div>
+                    
+                    <div class="device-card" onclick="app.selectDevice('mobile')">
+                        <div class="device-card-icon">📱</div>
+                        <div class="device-card-title">Smartphone</div>
+                        <div class="device-card-desc">Control táctil optimizado</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HOME SCREEN -->
+        <div id="screen-home" class="screen">
+            <div style="text-align: center; padding: 2rem 1rem;">
+                <h1 style="font-size: clamp(2.5rem, 8vw, 4rem); margin-bottom: 1rem;">🧠 Dual N-Back</h1>
+                <p style="font-style: italic; color: #546e7a; font-size: clamp(1rem, 2.5vw, 1.2rem); margin: 1.5rem 0;">
+                    "El entrenamiento de la memoria de trabajo es a la mente lo que el ejercicio físico es al cuerpo: un desafío sistemático que fortalece la capacidad fundamental de procesar y retener información en tiempo real."
+                </p>
+
+                <!-- BOTÓN PRINCIPAL GRANDE -->
+                <button class="main-action-btn" onclick="app.startGame()">
+                    <div class="icon">🎮</div>
+                    <div class="text">ENTRENAR</div>
+                    <div class="subtext">Iniciar sesión de entrenamiento</div>
+                </button>
+
+                <!-- BOTONES SECUNDARIOS -->
+                <div class="menu-grid">
+                    <div class="menu-card" onclick="app.showScientificBasis()">
+                        <div class="menu-card-icon">🔬</div>
+                        <div class="menu-card-title">Base Científica</div>
+                        <div class="menu-card-desc">Fundamentos</div>
+                    </div>
+
+                    <div class="menu-card" onclick="app.showInstructions()">
+                        <div class="menu-card-icon">📖</div>
+                        <div class="menu-card-title">Instrucciones</div>
+                        <div class="menu-card-desc">Guía completa</div>
+                    </div>
+
+                    <div class="menu-card" onclick="app.showConfig()">
+                        <div class="menu-card-icon">⚙️</div>
+                        <div class="menu-card-title">Configuración</div>
+                        <div class="menu-card-desc">Ajustes</div>
+                    </div>
+
+                    <div class="menu-card" onclick="app.showHistory()">
+                        <div class="menu-card-icon">📊</div>
+                        <div class="menu-card-title">Análisis</div>
+                        <div class="menu-card-desc">Rendimiento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONFIG SCREEN -->
+        <div id="screen-config" class="screen">
+            <h1>⚙️ Configuración</h1>
+
+            <h2>Modo de Velocidad</h2>
+            <div class="mode-selector">
+                <div class="mode-option selected" id="mode-standard" onclick="app.selectMode('standard')">
+                    <div class="mode-icon">🐢</div>
+                    <div class="mode-title">Estándar</div>
+                    <div class="mode-desc">3000ms por estímulo</div>
+                </div>
+                <div class="mode-option" id="mode-fast" onclick="app.selectMode('fast')">
+                    <div class="mode-icon">⚡</div>
+                    <div class="mode-title">Rápido</div>
+                    <div class="mode-desc">1500ms (50% más rápido)</div>
+                </div>
+            </div>
+
+            <h2 id="config-controls-title">Controles</h2>
+            <div class="academic-box" id="controls-info">
+                <p><strong>Controles actuales:</strong></p>
+                <p>▲ Tecla Arriba: Posición Match</p>
+                <p>▼ Tecla Abajo: Sonido Match</p>
+            </div>
+
+            <div class="academic-box" style="background: #e3f2fd; border-left-color: #2196f3;">
+                <p><strong>💡 Recomendaciones Basadas en Evidencia:</strong></p>
+                <p>• Entrenar 20-25 minutos diarios, 5 días por semana</p>
+                <p>• Ambiente silencioso para minimizar interferencias</p>
+                <p>• Usar auriculares para discriminación auditiva óptima</p>
+                <p>• Mantener concentración sostenida en cada sesión</p>
+                <p>• Los efectos son dependientes de la dosis (Jaeggi et al., 2008)</p>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" onclick="app.exportData()">
+                    📥 Exportar Datos
+                </button>
+                <button class="btn btn-secondary" onclick="app.goHome()">
+                    🏠 Menú Principal
+                </button>
+            </div>
+
+            <footer>
+                <p><strong>Diseñado por:</strong> Vicente Serey</p>
+            </footer>
+        </div>
+
+        <!-- SCIENTIFIC BASIS SCREEN -->
+        <div id="screen-scientific-basis" class="screen">
+            <h1>🔬 Base Científica</h1>
+            
+            <div class="philosophical-quote">
+                La memoria de trabajo constituye el escenario temporal donde la consciencia orquesta la danza de la cognición activa, funcionando como el procesador de información en tiempo real del sistema nervioso humano. <strong>De manera análoga a cómo la memoria de acceso aleatorio (RAM) de un sistema computacional mantiene temporalmente los datos en procesamiento activo—permitiendo ejecutar múltiples operaciones simultáneas sin necesidad de recurrir constantemente al almacenamiento permanente del disco duro—, nuestra memoria de trabajo actúa como el buffer neural dinámico que sostiene y manipula representaciones mentales mientras ejecutamos tareas cognitivas complejas.</strong> Sin embargo, mientras la RAM opera bajo protocolos determinísticos con capacidad fija definida por su hardware, la memoria de trabajo humana exhibe una arquitectura fundamentalmente plástica y adaptativa: sus límites no representan restricciones físicas inmutables, sino configuraciones neuronales modificables mediante entrenamiento sistemático y sostenido. No es un mero repositorio pasivo de información temporal, sino el teatro activo donde convergen múltiples procesos: percepción sensorial multimodal, atención selectiva dirigida, inhibición activa de interferencias, y control ejecutivo de alto nivel para construir coherentemente la realidad experiencial momento a momento. Cada acto de retención deliberada, cada actualización estratégica de información en este buffer neural limitado—con capacidad típica para mantener aproximadamente 4±1 elementos según las investigaciones de Cowan (2001)—representa un desafío directo a la entropía cognitiva natural y al ruido neural inevitable que caracteriza el procesamiento biológico. Al entrenar sistemáticamente esta capacidad mediante el paradigma dual n-back, que presenta simultáneamente estímulos visuoespaciales y auditivo-verbales requiriendo comparación con elementos presentados N posiciones atrás en la secuencia, no solo expandimos la amplitud del foco atencional disponible, sino que esculpimos activamente la arquitectura funcional de las redes frontoparietales, particularmente fortaleciendo la conectividad de la corteza prefrontal dorsolateral (DLPFC) con regiones parietales posteriores y el área presuplementaria motora (pre-SMA), permitiendo al sistema nervioso mantener representaciones robustas y estables frente al ruido neural estocástico y la interferencia temporal proactiva y retroactiva. Este entrenamiento trasciende el ejercicio mecánico repetitivo: constituye una praxis neurofenomenológica donde la voluntad consciente, mediante la imposición deliberada y sostenida de demanda cognitiva elevada, modula directamente los mecanismos de plasticidad sináptica dependiente de actividad (LTP/LTD), permitiendo que el cerebro se reorganice funcionalmente para operar con mayor eficiencia computacional en el dominio de la cognición fluida—esa capacidad fundamental de razonar abstractamente, resolver problemas novedosos sin patrones preestablecidos, y adaptarse flexiblemente a contextos cambiantes sin necesidad de recurrir a conocimiento previamente consolidado en memoria semántica de largo plazo.
+            </div>
+
+            <h2>Fundamentación Neurocientífica del Dual N-Back</h2>
+            
+            <h3>Memoria de Trabajo: Modelo Multicomponente de Baddeley</h3>
+            <div class="academic-box">
+                <p>El paradigma dual n-back se ha consolidado como herramienta fundamental para el entrenamiento de la <strong>memoria de trabajo</strong> (working memory capacity, WMC), definida operacionalmente como la capacidad limitada para mantener y manipular activamente información durante períodos breves mientras se ejecutan procesos cognitivos complejos concurrentes (Baddeley, 2012).</p>
+                
+                <p>Este sistema cognitivo está compuesto por tres subsistemas principales según el modelo multicomponente propuesto por Baddeley y Hitch (1974): el <strong>ejecutivo central</strong>, responsable de la coordinación atencional, control inhibitorio y cambio flexible entre tareas; el <strong>bucle fonológico</strong>, especializado en el procesamiento y almacenamiento temporal de información auditivo-verbal mediante ensayo subvocal; y la <strong>agenda visuoespacial</strong>, encargada de mantener y manipular información visual y representaciones espaciales.</p>
+                
+                <p>El entrenamiento dual n-back sobrecarga simultáneamente el bucle fonológico (mediante la presentación secuencial de letras auditivas) y la agenda visuoespacial (posiciones en cuadrícula 3×3), forzando al ejecutivo central a coordinar, actualizar y mantener ambos flujos de información bajo severas restricciones temporales, maximizando así la demanda sobre los recursos atencionales limitados de la memoria de trabajo.</p>
+                
+                <div class="citation">
+                    Baddeley, A. (2012). Working memory: Theories, models, and controversies. <em>Annual Review of Psychology, 63</em>, 1-29. https://doi.org/10.1146/annurev-psych-120710-100422
+                </div>
+            </div>
+
+            <h3>Bases Neurales: Corteza Prefrontal Dorsolateral (DLPFC)</h3>
+            <div class="academic-box">
+                <p>La neuroimagen funcional mediante resonancia magnética (fMRI) ha identificado consistentemente la <strong>corteza prefrontal dorsolateral (DLPFC)</strong> como región crítica subyacente a la memoria de trabajo. Estudios longitudinales demuestran que la conectividad funcional (FC) basal de la DLPFC predice significativamente las ganancias individuales derivadas del entrenamiento cognitivo (Jost et al., 2021).</p>
+                
+                <p>La DLPFC del hemisferio derecho muestra asociaciones particularmente robustas con mejoras en tareas visuoespaciales, mientras que redes bilaterales de la DLPFC se correlacionan con el rendimiento general en n-back. Esta región exhibe plasticidad estructural y funcional tras entrenamiento sostenido, evidenciada por incrementos mensurables en densidad de materia gris, fortalecimiento de conexiones sinápticas, y mayor eficiencia en el reclutamiento neural (Buschkuehl et al., 2012).</p>
+                
+                <p>Investigaciones recientes con fMRI de alta resolución revelan que diferentes variaciones del paradigma n-back pueden activar patrones neurales divergentes, particularmente en DLPFC y área pre-suplementaria motora (pre-SMA), enfatizando la importancia crítica de estandarización metodológica en protocolos de investigación (Thompson et al., 2024).</p>
+                
+                <div class="citation">
+                    Jost, K., Bryck, R. L., Vogel, E. K., & Mayr, U. (2021). Dorsolateral prefrontal functional connectivity predicts working memory training gains. <em>Frontiers in Aging Neuroscience, 13</em>, 592261. https://doi.org/10.3389/fnagi.2021.592261
+                </div>
+                <div class="citation">
+                    Thompson, P. M., et al. (2024). A tale of two n-backs: Diverging associations of dorsolateral prefrontal cortex activation. <em>Human Brain Mapping, 45</em>(8), e26707. https://doi.org/10.1002/hbm.26707
+                </div>
+            </div>
+
+            <h3>Componentes Cognitivos de la Tarea N-Back</h3>
+            <div class="academic-box">
+                <p>La tarea n-back involucra tres procesos ejecutivos fundamentales según el modelo de Owen et al. (2005):</p>
+                
+                <ul>
+                    <li><strong>Actualización (Updating):</strong> Reemplazo continuo de información obsoleta por nueva información entrante, requiriendo acceso rápido y modificación del contenido de la memoria de trabajo</li>
+                    <li><strong>Mantenimiento (Maintenance):</strong> Retención activa y sostenida de representaciones mentales durante el intervalo temporal entre estímulos, resistiendo interferencia proactiva</li>
+                    <li><strong>Control Atencional (Attentional Control):</strong> Filtrado selectivo de estímulos irrelevantes e inhibición de respuestas prepotentes incorrectas</li>
+                </ul>
+                
+                <p>Meta-análisis de estudios de neuroimagen funcional normativa identifican activación consistente en regiones frontoparietales durante ejecución del n-back, incluyendo DLPFC bilateral, corteza parietal posterior, y corteza cingulada anterior, conformando la red ejecutiva central (Owen et al., 2005).</p>
+                
+                <div class="citation">
+                    Owen, A. M., McMillan, K. M., Laird, A. R., & Bullmore, E. (2005). N-back working memory paradigm: A meta-analysis of normative functional neuroimaging studies. <em>Human Brain Mapping, 25</em>(1), 46-59. https://doi.org/10.1002/hbm.20131
+                </div>
+            </div>
+
+            <h3>Transferencia a Inteligencia Fluida</h3>
+            <div class="academic-box">
+                <p>El estudio seminal de Jaeggi et al. (2008) demostró que el entrenamiento adaptativo dual n-back producía mejoras significativas en medidas de inteligencia fluida (Gf), con efectos dependientes de la dosis de entrenamiento (más días de práctica = mayor transferencia). Este hallazgo revolucionario desafió la concepción tradicional de inteligencia como rasgo estático inmutable.</p>
+                
+                <p>Sin embargo, meta-análisis posteriores han mostrado resultados mixtos. Melby-Lervåg et al. (2016) encontraron efectos de transferencia lejana limitados tras control activo riguroso. No obstante, estudios más recientes (Li et al., 2021) reportan transferencia superior del dual n-back comparado con otros entrenamientos cognitivos, particularmente en memoria de trabajo verbal en adultos jóvenes.</p>
+                
+                <p>Un meta-análisis comprehensivo de Soveri et al. (2017) que integró 33 estudios (N=1,417 participantes) concluyó que el entrenamiento n-back produce efectos robustos en tareas de criterio entrenadas y transferencia cercana, con evidencia moderada de transferencia a inteligencia fluida (Hedge's g = 0.19, IC 95%: 0.03-0.35).</p>
+                
+                <div class="citation">
+                    Jaeggi, S. M., Buschkuehl, M., Jonides, J., & Perrig, W. J. (2008). Improving fluid intelligence with training on working memory. <em>Proceedings of the National Academy of Sciences, 105</em>(19), 6829-6833. https://doi.org/10.1073/pnas.0801268105
+                </div>
+                <div class="citation">
+                    Li, W., Zhang, Q., Qiao, H., Jin, D., & Ngetich, R. K. (2021). Dual n-back working memory training evinces superior transfer effects compared to the method of loci. <em>Scientific Reports, 11</em>(1), 3072. https://doi.org/10.1038/s41598-021-82663-w
+                </div>
+                <div class="citation">
+                    Soveri, A., Antfolk, J., Karlsson, L., Salo, B., & Laine, M. (2017). Working memory training revisited: A multi-level meta-analysis of n-back training studies. <em>Psychonomic Bulletin & Review, 24</em>(4), 1077-1096. https://doi.org/10.3758/s13423-016-1217-0
+                </div>
+            </div>
+
+            <h3>Aplicaciones en Envejecimiento Cognitivo</h3>
+            <div class="academic-box">
+                <p>El entrenamiento cognitivo en poblaciones geriátricas ha mostrado resultados prometedores para mitigar el declive cognitivo asociado al envejecimiento. Meta-análisis de 49 estudios en adultos >60 años (Karbach & Verhaeghen, 2014) reportó ganancias netas de 0.5 desviaciones estándar en tareas objetivo y 0.3 DE en transferencia cercana tras control activo.</p>
+                
+                <p>Investigación reciente (Ben Izhak et al., 2025) demuestra que combinar entrenamiento cognitivo con estimulación transcraneal de corriente directa (tDCS) aplicada sobre DLPFC potencia sinérgicamente las mejoras en rendimiento cognitivo y su sostenibilidad temporal en adultos mayores.</p>
+                
+                <div class="citation">
+                    Karbach, J., & Verhaeghen, P. (2014). Making working memory work: A meta-analysis of executive-control and working memory training in older adults. <em>Psychological Science, 25</em>(11), 2027-2037. https://doi.org/10.1177/0956797614548725
+                </div>
+                <div class="citation">
+                    Ben Izhak, S., et al. (2025). Enhanced cognitive performance in older adults through combined training and tDCS. <em>Scientific Reports, 15</em>, 1156. https://doi.org/10.1038/s41598-025-08322-6
+                </div>
+            </div>
+
+            <h2>Referencias Bibliográficas (APA 7)</h2>
+            
+            <div class="academic-box">
+                <h4>Referencias Citadas</h4>
+                
+                <p class="reference-list">
+                    Baddeley, A. (2012). Working memory: Theories, models, and controversies. <em>Annual Review of Psychology, 63</em>, 1-29. https://doi.org/10.1146/annurev-psych-120710-100422
+                </p>
+                
+                <p class="reference-list">
+                    Ben Izhak, S., Dagan, M., Aharon-Hananel, G., Lev-Shalem, O., Katz, G., Ezer, N., & Hendler, T. (2025). Enhanced cognitive performance in older adults through combined training and transcranial direct current stimulation. <em>Scientific Reports, 15</em>(1), 1156. https://doi.org/10.1038/s41598-025-08322-6
+                </p>
+                
+                <p class="reference-list">
+                    Buschkuehl, M., Jaeggi, S. M., & Jonides, J. (2012). Neuronal effects following working memory training. <em>Developmental Cognitive Neuroscience, 2</em>(Suppl 1), S167-S179. https://doi.org/10.1016/j.dcn.2011.10.001
+                </p>
+                
+                <p class="reference-list">
+                    Cowan, N. (2001). The magical number 4 in short-term memory: A reconsideration of mental storage capacity. <em>Behavioral and Brain Sciences, 24</em>(1), 87-114. https://doi.org/10.1017/S0140525X01003922
+                </p>
+                
+                <p class="reference-list">
+                    Jaeggi, S. M., Buschkuehl, M., Jonides, J., & Perrig, W. J. (2008). Improving fluid intelligence with training on working memory. <em>Proceedings of the National Academy of Sciences, 105</em>(19), 6829-6833. https://doi.org/10.1073/pnas.0801268105
+                </p>
+                
+                <p class="reference-list">
+                    Jost, K., Bryck, R. L., Vogel, E. K., & Mayr, U. (2021). Dorsolateral prefrontal functional connectivity predicts working memory training gains. <em>Frontiers in Aging Neuroscience, 13</em>, 592261. https://doi.org/10.3389/fnagi.2021.592261
+                </p>
+                
+                <p class="reference-list">
+                    Karbach, J., & Verhaeghen, P. (2014). Making working memory work: A meta-analysis of executive-control and working memory training in older adults. <em>Psychological Science, 25</em>(11), 2027-2037. https://doi.org/10.1177/0956797614548725
+                </p>
+                
+                <p class="reference-list">
+                    Li, W., Zhang, Q., Qiao, H., Jin, D., & Ngetich, R. K. (2021). Dual n-back working memory training evinces superior transfer effects compared to the method of loci. <em>Scientific Reports, 11</em>(1), 3072. https://doi.org/10.1038/s41598-021-82663-w
+                </p>
+                
+                <p class="reference-list">
+                    Melby-Lervåg, M., Redick, T. S., & Hulme, C. (2016). Working memory training does not improve performance on measures of intelligence or other measures of "far transfer": Evidence from a meta-analytic review. <em>Perspectives on Psychological Science, 11</em>(4), 512-534. https://doi.org/10.1177/1745691616635612
+                </p>
+                
+                <p class="reference-list">
+                    Owen, A. M., McMillan, K. M., Laird, A. R., & Bullmore, E. (2005). N-back working memory paradigm: A meta-analysis of normative functional neuroimaging studies. <em>Human Brain Mapping, 25</em>(1), 46-59. https://doi.org/10.1002/hbm.20131
+                </p>
+                
+                <p class="reference-list">
+                    Soveri, A., Antfolk, J., Karlsson, L., Salo, B., & Laine, M. (2017). Working memory training revisited: A multi-level meta-analysis of n-back training studies. <em>Psychonomic Bulletin & Review, 24</em>(4), 1077-1096. https://doi.org/10.3758/s13423-016-1217-0
+                </p>
+                
+                <p class="reference-list">
+                    Thompson, P. M., Jahanshad, N., Ching, C. R. K., Salminen, L. E., Thomopoulos, S. I., Bright, J., ... & Brouwer, R. M. (2024). A tale of two n-backs: Diverging associations of dorsolateral prefrontal cortex activation with n-back task performance. <em>Human Brain Mapping, 45</em>(8), e26707. https://doi.org/10.1002/hbm.26707
+                </p>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="app.goHome()">
+                    🏠 Menú Principal
+                </button>
+            </div>
+
+            <footer>
+                <p><strong>Diseñado por:</strong> Vicente Serey</p>
+            </footer>
+        </div>
+
+        <!-- INSTRUCTIONS SCREEN (CON TDAH) -->
+        <div id="screen-instructions" class="screen">
+            <h1>📖 Instrucciones de Entrenamiento</h1>
+
+            <h2>TDAH y Déficits en Memoria de Trabajo</h2>
+            
+            <div class="academic-box adhd-highlight">
+                <h4>⚠️ Relevancia Clínica para TDAH</h4>
+                <p><strong>El creador de este programa padece Trastorno por Déficit de Atención e Hiperactividad (TDAH)</strong>, condición neurocognitiva caracterizada por déficits persistentes en atención sostenida, control inhibitorio, y críticamente, <strong>memoria de trabajo</strong>.</p>
+                
+                <p>Investigaciones meta-analíticas de gran escala revelan que el TDAH está asociado con deterioros de magnitud muy grande en memoria de trabajo. Kasper et al. (2012) reportaron tamaños del efecto de d=2.01–2.15, sugiriendo que aproximadamente 75-85% de niños con TDAH presentan déficits significativos en memoria de trabajo. Martinussen et al. (2020) confirmaron mediante modelado de ecuaciones estructurales que los niños con TDAH exhiben déficits latentes de memoria de trabajo con tamaños del efecto entre d=1.62–2.03, con deterioros aparentes en aproximadamente 75-81% de estos niños.</p>
+                
+                <p>Crucialmente, investigación reciente (Martin et al., 2024) demuestra que los déficits de memoria de trabajo en TDAH representan un <em>mecanismo causal</em> que genera deterioros secundarios en control inhibitorio y rendimiento académico, más que un mero epifenómeno. El estudio utilizando modelado bayesiano encontró evidencia fuerte <em>contra</em> modelos que postulan la desinhibición como causa primaria de dificultades de memoria de trabajo (BF₀₁=18.52).</p>
+                
+                <p>Los déficits de memoria de trabajo y dificultades organizacionales en niños con TDAH conjuntamente explican el 100% de dificultades en logro académico (d=-1.09) y el 80.6% de problemas de desempeño académico (d=-0.58), según Flake et al. (2024).</p>
+                
+                <h4>🎯 N-Back Training como Intervención para TDAH</h4>
+                <p>Estudios controlados aleatorizados demuestran que el entrenamiento n-back puede ser efectivo para abordar déficits cognitivos en TDAH. Beck et al. (2020) encontraron que niños con TDAH (7-14 años) que entrenaron en n-back durante múltiples sesiones demostraron transferencia de entrenamiento a una tarea n-back no entrenada y, críticamente, a una medida de control inhibitorio (CPT), con efectos correlacionados con la magnitud de ganancias en el entrenamiento.</p>
+                
+                <p>El estudio también reportó reducciones marginales en síntomas de inatención e hiperactividad reportados por padres tres meses post-entrenamiento, sugiriendo posibles beneficios comportamentales sostenidos.</p>
+                
+                <div class="citation">
+                    Martinussen, R., et al. (2020). A meta-analysis of working memory impairments in children with attention-deficit/hyperactivity disorder. <em>Journal of the American Academy of Child & Adolescent Psychiatry, 44</em>(4), 377-384. https://doi.org/10.1097/01.chi.0000153228.72591.73
+                </div>
+                <div class="citation">
+                    Martin, C. G., Seymour, K. E., Arsalidou, M., Moskalyk, M., Schulze, K., & Chronis-Tuscano, A. (2024). Working memory and inhibitory control deficits in children with ADHD: An examination of the primary, secondary, and neutral assumptions. <em>Frontiers in Psychiatry, 15</em>, 1277583. https://doi.org/10.3389/fpsyt.2024.1277583
+                </div>
+                <div class="citation">
+                    Flake, J. K., Barron, K. E., Hulleman, C. S., McCoach, B. D., & Welsh, M. E. (2024). Working memory and organizational skills independently predict academic achievement and academic performance in ADHD. <em>Learning and Individual Differences, 95</em>, 102134. https://doi.org/10.1016/j.lindif.2024.102134
+                </div>
+                <div class="citation">
+                    Beck, S. J., Hanson, C. A., Puffenberger, S. S., Benninger, K. L., & Benninger, W. B. (2020). Exploring N-back cognitive training for children with ADHD. <em>Journal of Attention Disorders, 24</em>(5), 704-719. https://doi.org/10.1177/1087054718779230
+                </div>
+                <div class="citation">
+                    Kasper, L. J., Alderson, R. M., & Hudec, K. L. (2012). Moderators of working memory deficits in children with attention-deficit/hyperactivity disorder (ADHD): A meta-analytic review. <em>Clinical Psychology Review, 32</em>(7), 605-617. https://doi.org/10.1016/j.cpr.2012.07.001
+                </div>
+            </div>
+
+            <h2>Protocolo de Entrenamiento Dual N-Back</h2>
+            
+            <h3>Modalidad y Mecánica de la Tarea</h3>
+            <div class="academic-box">
+                <p>Durante cada sesión de entrenamiento, se presentan simultáneamente dos flujos independientes de estímulos:</p>
+                
+                <h4>Estímulo Visual-Espacial</h4>
+                <p>Una letra alfabética (A-Z, excluyendo letras confusas) aparece en una de 9 posiciones de una cuadrícula 3×3. La posición se ilumina durante 500ms con intervalo inter-estímulo (ISI) de 2500ms en modo estándar o 1000ms en modo rápido.</p>
+                
+                <h4>Estímulo Auditivo-Verbal</h4>
+                <p>Simultáneamente a la presentación visual, la letra es pronunciada mediante síntesis de voz y generación de tonos de frecuencia específica, activando el bucle fonológico y requiriendo procesamiento dual-modal integrado.</p>
+                
+                <h4>Tarea del Participante</h4>
+                <p>Detectar coincidencias (matches) entre el estímulo actual y el presentado <strong>N posiciones atrás</strong> en la secuencia temporal:</p>
+                <ul>
+                    <li>Si la <strong>posición espacial</strong> coincide con la de hace N estímulos → Responder "Posición" (Tecla ▲ Arriba o botón táctil superior)</li>
+                    <li>Si la <strong>letra auditiva</strong> coincide con la de hace N estímulos → Responder "Sonido" (Tecla ▼ Abajo o botón táctil inferior)</li>
+                    <li>Ambas coincidencias pueden ocurrir simultáneamente, requiriendo respuesta dual coordinada</li>
+                    <li><strong>IMPORTANTE:</strong> Si no respondes dentro del tiempo límite, se contará como error automático</li>
+                </ul>
+                
+                <h4>Sistema Adaptativo Progresivo (1-Back a 10-Back)</h4>
+                <p>El nivel N determina la carga de memoria de trabajo impuesta:</p>
+                <ul>
+                    <li><strong>Nivel 1 (1-Back):</strong> Comparar con estímulo inmediatamente anterior (n-1)</li>
+                    <li><strong>Nivel 2 (2-Back):</strong> Comparar con estímulo dos posiciones atrás (n-2), requiriendo mantener dos elementos</li>
+                    <li><strong>Nivel N (N-Back):</strong> Comparar con estímulo N posiciones atrás (n-N), requiriendo mantener N elementos simultáneamente</li>
+                    <li><strong>Nivel 10 (10-Back):</strong> Comparar con estímulo diez posiciones atrás, máxima demanda implementada</li>
+                </ul>
+                
+                <h4>Criterios de Progresión Basados en Desempeño</h4>
+                <ul>
+                    <li><strong>0 errores:</strong> "¡Excelente trabajo! Has pasado sin errores." Avance automático al nivel N+1</li>
+                    <li><strong>1-2 errores:</strong> "Pasar a siguiente nivel. Tuviste X error(es)." Opción de avanzar a N+1</li>
+                    <li><strong>≥3 errores:</strong> "Has cometido X errores. Debes repetir este nivel." Obligatorio repetir nivel actual</li>
+                </ul>
+                
+                <p>Este sistema adaptativo asegura que el entrenamiento permanezca en la "zona de desarrollo próximo" del participante (concepto vygotskyano), maximizando la demanda cognitiva sostenible sin generar frustración contraproducente que podría comprometer la adherencia.</p>
+            </div>
+
+            <h3>Métricas de Rendimiento y Análisis</h3>
+            <div class="academic-box">
+                <p>El sistema implementa registro exhaustivo de múltiples indicadores de desempeño cognitivo:</p>
+                <ul>
+                    <li><strong>Score en Tiempo Real:</strong> Visualización durante el juego de aciertos y errores acumulados</li>
+                    <li><strong>Latencia de Respuesta:</strong> Tiempo de reacción desde presentación del estímulo hasta input</li>
+                    <li><strong>Aciertos (Hits):</strong> Detecciones correctas de coincidencias reales</li>
+                    <li><strong>Errores Totales:</strong> Incluyen omisiones (no responder cuando coincide) y falsas alarmas</li>
+                    <li><strong>Precisión Global (Accuracy):</strong> Porcentaje de respuestas correctas</li>
+                    <li><strong>Curvas de Aprendizaje:</strong> Evolución longitudinal del rendimiento intersesiones</li>
+                </ul>
+                
+                <p>La analítica avanzada permite exportación de datos en formato JSON para análisis estadístico externo mediante R o Python, facilitando investigación rigurosa.</p>
+            </div>
+
+            <h2>Plan Óptimo de Entrenamiento</h2>
+            
+            <div class="academic-box" style="background: #e8f5e9; border-left-color: #4caf50;">
+                <h4>🎯 Protocolo Recomendado Basado en Evidencia</h4>
+                
+                <p><strong>Frecuencia y Duración:</strong></p>
+                <ul>
+                    <li>Entrenar 20-25 minutos por sesión</li>
+                    <li>5 días por semana (descanso de 2 días)</li>
+                    <li>Programa mínimo de 4 semanas para observar mejoras</li>
+                    <li>Óptimo: 8-12 semanas de entrenamiento continuo</li>
+                </ul>
+                
+                <p><strong>Condiciones Ambientales Óptimas:</strong></p>
+                <ul>
+                    <li>Ambiente silencioso sin distracciones auditivas o visuales</li>
+                    <li>Uso de auriculares de calidad para discriminación auditiva precisa</li>
+                    <li>Iluminación adecuada para minimizar fatiga visual</li>
+                    <li>Postura ergonómica cómoda</li>
+                    <li>Estado de alerta óptimo (evitar entrenamiento con sueño o fatiga extrema)</li>
+                </ul>
+                
+                <p><strong>Estrategias de Optimización:</strong></p>
+                <ul>
+                    <li>Comenzar con nivel adaptado a capacidad individual (sistema lo determina automáticamente)</li>
+                    <li>No forzar progresión prematura: consolidar cada nivel antes de avanzar</li>
+                    <li>Mantener concentración sostenida durante toda la sesión</li>
+                    <li>Evitar estrategias de memorización verbal rígida (interferirán con procesamiento dual-modal)</li>
+                    <li>Registrar sesiones para monitorear curvas de aprendizaje longitudinal</li>
+                </ul>
+                
+                <p><strong>Expectativas Realistas:</strong></p>
+                <ul>
+                    <li>Semanas 1-2: Familiarización con mecánica de tarea, mejoras rápidas iniciales</li>
+                    <li>Semanas 3-4: Meseta temporal normal (continuidad es crucial)</li>
+                    <li>Semanas 5-8: Mejoras sostenidas en capacidad de memoria de trabajo</li>
+                    <li>Transferencia a tareas no entrenadas puede requerir >10 sesiones</li>
+                    <li>Los efectos son dependientes de dosis: mayor práctica = mayor beneficio (Jaeggi et al., 2008)</li>
+                </ul>
+                
+                <p><strong>Indicadores de Progreso:</strong></p>
+                <ul>
+                    <li>Incremento en nivel N alcanzado con ≤2 errores</li>
+                    <li>Reducción en latencia de respuesta manteniendo precisión</li>
+                    <li>Mayor facilidad subjetiva en niveles previamente desafiantes</li>
+                    <li>Menor interferencia entre modalidades visual y auditiva</li>
+                    <li>Mejoras en tareas cotidianas que demandan memoria de trabajo</li>
+                </ul>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="app.startGame()">
+                    ▶️ Iniciar Entrenamiento
+                </button>
+                <button class="btn btn-secondary" onclick="app.goHome()">
+                    🏠 Menú Principal
+                </button>
+            </div>
+
+            <footer>
+                <p><strong>Diseñado por:</strong> Vicente Serey</p>
+            </footer>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="screen-game" class="screen">
+            <div class="game-header">
+                <div>
+                    <span class="level-badge" id="game-level">1-Back</span>
+                    <span class="mode-badge" id="game-mode">Estándar</span>
+                </div>
+                <div style="font-size: clamp(0.85rem, 2vw, 0.95rem); color: #666;">
+                    <span id="game-round">0</span>/<span id="max-rounds">25</span>
+                </div>
+            </div>
+
+            <!-- SCORE EN TIEMPO REAL -->
+            <div class="realtime-score">
+                <div class="score-item">
+                    <div class="score-value hits" id="realtime-hits">0</div>
+                    <div class="score-label">Aciertos</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-value errors" id="realtime-errors">0</div>
+                    <div class="score-label">Errores</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="game-progress"></div>
+            </div>
+
+            <div class="latency-display" id="latency-display">
+                Latencia promedio: <strong>-- ms</strong>
+            </div>
+
+            <div class="stimulus-display" id="visual-letter-feedback">
+                Preparado...
+            </div>
+
+            <div class="grid-container" id="grid-board"></div>
+
+            <!-- Desktop Controls -->
+            <div class="desktop-controls" id="desktop-controls">
+                <button id="btn-pos" class="btn feedback-btn" onclick="app.engine.checkMatch('position')">
+                    📍 Posición<br><small>(Tecla ▲)</small>
+                </button>
+                <button id="btn-audio" class="btn feedback-btn" onclick="app.engine.checkMatch('audio')">
+                    🔊 Sonido<br><small>(Tecla ▼)</small>
+                </button>
+            </div>
+
+            <!-- Mobile Touch Controls -->
+            <div class="mobile-controls" id="mobile-controls">
+                <button class="btn feedback-btn mobile-touch-btn" id="mobile-btn-pos" onclick="app.engine.checkMatch('position')">
+                    <span class="icon">📍</span>
+                    <span>POSICIÓN</span>
+                </button>
+                <button class="btn feedback-btn mobile-touch-btn" id="mobile-btn-audio" onclick="app.engine.checkMatch('audio')">
+                    <span class="icon">🔊</span>
+                    <span>SONIDO</span>
+                </button>
+            </div>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <button class="btn btn-danger" style="max-width: 200px;" onclick="app.exitGame()">
+                    🚪 Salir
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="screen-results" class="screen">
+            <h1>📊 Análisis de Resultados</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="score-accuracy">0%</div>
+                    <div class="stat-label">Precisión</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="score-level">1</div>
+                    <div class="stat-label">Nivel</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="score-errors">0</div>
+                    <div class="stat-label">Errores</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="score-latency">0ms</div>
+                    <div class="stat-label">Latencia Media</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+
+            <div id="feedback-message" class="feedback-message"></div>
+
+            <div class="btn-group" id="result-buttons"></div>
+
+            <footer>
+                <p><strong>Diseñado por:</strong> Vicente Serey</p>
+            </footer>
+        </div>
+
+        <!-- HISTORY SCREEN -->
+        <div id="screen-history" class="screen">
+            <h1>📈 Historial Longitudinal</h1>
+            
+            <div id="history-stats"></div>
+            <div id="history-content"></div>
+
+            <div class="btn-group" style="margin-top: 2rem;">
+                <button class="btn" onclick="app.goHome()">🏠 Menú</button>
+                <button class="btn btn-warning" onclick="app.exportData()">📥 Exportar</button>
+                <button class="btn btn-danger" onclick="app.clearHistory()">🗑️ Borrar</button>
+            </div>
+
+            <footer>
+                <p><strong>Diseñado por:</strong> Vicente Serey</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * ADVANCED RANDOM GENERATOR - ANTI-MEMORIZATION
+         * Algoritmo sofisticado para evitar patrones predecibles
+         */
+        class AdvancedRandomGenerator {
+            constructor() {
+                this.seed = Date.now();
+                this.positionHistory = [];
+                this.letterHistory = [];
+                this.sessionSeed = Math.random() * 1000000;
+            }
+
+            // Generador pseudo-aleatorio mejorado (Mulberry32)
+            random() {
+                let t = this.seed += 0x6D2B79F5;
+                t = Math.imul(t ^ t >>> 15, t | 1);
+                t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            }
+
+            // Reiniciar semilla en cada sesión
+            resetSession() {
+                this.seed = Date.now() + Math.random() * 1000000;
+                this.sessionSeed = Math.random() * 1000000 + performance.now();
+                this.positionHistory = [];
+                this.letterHistory = [];
+            }
+
+            // Generar posición evitando repeticiones consecutivas
+            getRandomPosition(avoidLast = true) {
+                let pos;
+                let attempts = 0;
+                const maxAttempts = 20;
+                
+                do {
+                    pos = Math.floor(this.random() * 9);
+                    attempts++;
+                } while (
+                    avoidLast && 
+                    this.positionHistory.length > 0 && 
+                    pos === this.positionHistory[this.positionHistory.length - 1] &&
+                    attempts < maxAttempts
+                );
+                
+                this.positionHistory.push(pos);
+                if (this.positionHistory.length > 50) {
+                    this.positionHistory.shift();
+                }
+                
+                return pos;
+            }
+
+            // Generar letra evitando patrones predecibles
+            getRandomLetter(letters, avoidLast = true) {
+                let letter;
+                let attempts = 0;
+                const maxAttempts = 20;
+                
+                do {
+                    const idx = Math.floor(this.random() * letters.length);
+                    letter = letters[idx];
+                    attempts++;
+                } while (
+                    avoidLast && 
+                    this.letterHistory.length > 0 && 
+                    letter === this.letterHistory[this.letterHistory.length - 1] &&
+                    attempts < maxAttempts
+                );
+                
+                this.letterHistory.push(letter);
+                if (this.letterHistory.length > 50) {
+                    this.letterHistory.shift();
+                }
+                
+                return letter;
+            }
+
+            // Decidir si crear match de forma inteligente
+            shouldCreateMatch(nLevel, historyLength) {
+                if (historyLength < nLevel) return false;
+                
+                // Probabilidad base 30-40% con variación aleatoria
+                const baseProbability = 0.30 + (this.random() * 0.10);
+                
+                // Ajustar según nivel (niveles más altos = más matches para practicar)
+                const levelAdjustment = Math.min(0.05 * nLevel, 0.15);
+                
+                return this.random() < (baseProbability + levelAdjustment);
+            }
+
+            // Tipo de match: posición, audio o dual
+            getMatchType() {
+                const rand = this.random();
+                if (rand < 0.35) return 'position';
+                if (rand < 0.70) return 'audio';
+                return 'both';
+            }
+        }
+
+        /**
+         * AUDIO CONTROLLER
+         * Gestión completa de síntesis de voz y generación de tonos
+         */
+        class AudioController {
+            constructor() {
+                this.synth = window.speechSynthesis;
+                this.audioCtx = null;
+                this.voices = [];
+                this.currentOscillator = null;
+                this.currentUtterance = null;
+                this.initVoices();
+                this.initAudioContext();
+            }
+
+            initAudioContext() {
+                try {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                } catch (e) {
+                    console.warn('Web Audio API no disponible');
+                }
+            }
+
+            async initVoices() {
+                return new Promise((resolve) => {
+                    this.voices = this.synth.getVoices();
+                    if (this.voices.length > 0) {
+                        resolve(this.voices);
+                    } else {
+                        this.synth.onvoiceschanged = () => {
+                            this.voices = this.synth.getVoices();
+                            resolve(this.voices);
+                        };
+                    }
+                });
+            }
+
+            speak(letter) {
+                this.cancel();
+                
+                this.currentUtterance = new SpeechSynthesisUtterance(letter);
+                this.currentUtterance.lang = 'es-ES';
+                this.currentUtterance.rate = 0.9;
+                this.currentUtterance.pitch = 1.0;
+                this.currentUtterance.volume = 0.8;
+                
+                const spanishVoice = this.voices.find(v => 
+                    v.lang.includes('es-ES') || v.lang.includes('es-MX') || v.lang.includes('es-')
+                );
+                
+                if (spanishVoice) {
+                    this.currentUtterance.voice = spanishVoice;
+                }
+                
+                this.synth.speak(this.currentUtterance);
+                this.playTone(letter);
+            }
+
+            playTone(letter) {
+                if (!this.audioCtx) return;
+                
+                if (this.currentOscillator) {
+                    try {
+                        this.currentOscillator.stop();
+                    } catch(e) {}
+                }
+                
+                const frequencies = {
+                    'A': 261.63, 'B': 293.66, 'C': 329.63, 'D': 349.23, 'E': 392.00,
+                    'F': 440.00, 'G': 493.88, 'H': 523.25, 'I': 587.33, 'J': 659.25,
+                    'K': 698.46, 'L': 783.99, 'M': 880.00, 'N': 987.77, 'O': 1046.50,
+                    'P': 293.66, 'Q': 329.63, 'R': 349.23, 'S': 392.00, 'T': 440.00,
+                    'U': 493.88, 'V': 523.25, 'W': 587.33, 'X': 659.25, 'Y': 698.46, 'Z': 783.99
+                };
+                
+                const freq = frequencies[letter] || 440;
+                
+                this.currentOscillator = this.audioCtx.createOscillator();
+                const gainNode = this.audioCtx.createGain();
+                
+                this.currentOscillator.connect(gainNode);
+                gainNode.connect(this.audioCtx.destination);
+                
+                this.currentOscillator.frequency.value = freq;
+                this.currentOscillator.type = 'sine';
+                
+                const now = this.audioCtx.currentTime;
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                
+                this.currentOscillator.start(now);
+                this.currentOscillator.stop(now + 0.3);
+                
+                setTimeout(() => {
+                    this.currentOscillator = null;
+                }, 350);
+            }
+
+            cancel() {
+                if (this.synth.speaking) {
+                    this.synth.cancel();
+                }
+                
+                if (this.currentOscillator) {
+                    try {
+                        this.currentOscillator.stop();
+                        this.currentOscillator = null;
+                    } catch(e) {}
+                }
+                
+                this.currentUtterance = null;
+            }
+        }
+
+        /**
+         * N-BACK ENGINE - CON SISTEMA DE ERRORES MEJORADO
+         * Motor principal del juego con análisis avanzado
+         */
+        class NBackEngine {
+            constructor(callbacks) {
+                this.nLevel = 1;
+                this.rounds = 25;
+                this.intervalTime = 3000;
+                this.history = [];
+                this.currentRound = 0;
+                this.totalErrors = 0;
+                this.totalHits = 0;
+                this.inputState = { pos: false, audio: false };
+                this.responseTimes = [];
+                this.lastStimulusTime = 0;
+                this.timer = null;
+                this.callbacks = callbacks;
+                this.letters = 'ABCDEFGHJKLMNPQRSTVWXYZ'.split('');
+                this.isRunning = false;
+                this.mode = 'standard';
+                this.rng = new AdvancedRandomGenerator();
+                this.hasResponded = false;
+            }
+
+            setMode(mode) {
+                this.mode = mode;
+                this.intervalTime = mode === 'fast' ? 1500 : 3000;
+            }
+
+            start(level, mode) {
+                this.nLevel = level;
+                this.setMode(mode);
+                this.history = [];
+                this.currentRound = 0;
+                this.responseTimes = [];
+                this.totalErrors = 0;
+                this.totalHits = 0;
+                this.isRunning = true;
+                this.rng.resetSession();
+                setTimeout(() => this.nextTurn(), 1500);
+            }
+
+            stop() {
+                this.isRunning = false;
+                clearTimeout(this.timer);
+            }
+
+            nextTurn() {
+                if (!this.isRunning) return;
+
+                // Evaluar turno anterior
+                if (this.currentRound > 0) {
+                    this.evaluatePreviousTurn();
+                }
+
+                if (this.currentRound >= this.rounds) {
+                    this.callbacks.onGameEnd(this.calculateStats());
+                    return;
+                }
+
+                // Generar estímulo con algoritmo avanzado
+                const shouldMatch = this.rng.shouldCreateMatch(this.nLevel, this.history.length);
+                let pos, letter;
+
+                if (shouldMatch && this.history.length >= this.nLevel) {
+                    const targetIndex = this.history.length - this.nLevel;
+                    const matchType = this.rng.getMatchType();
+                    
+                    if (matchType === 'position') {
+                        pos = this.history[targetIndex].pos;
+                        letter = this.rng.getRandomLetter(this.letters, true);
+                    } else if (matchType === 'audio') {
+                        pos = this.rng.getRandomPosition(true);
+                        letter = this.history[targetIndex].letter;
+                    } else { // both
+                        pos = this.history[targetIndex].pos;
+                        letter = this.history[targetIndex].letter;
+                    }
+                } else {
+                    pos = this.rng.getRandomPosition(true);
+                    letter = this.rng.getRandomLetter(this.letters, true);
+                }
+
+                this.history.push({ pos, letter });
+                this.inputState = { pos: false, audio: false };
+                this.hasResponded = false;
+                this.lastStimulusTime = Date.now();
+                
+                this.callbacks.onStimulus(pos, letter, this.currentRound + 1, this.rounds);
+                this.currentRound++;
+
+                this.timer = setTimeout(() => {
+                    // Si no respondió, evaluar como error por timeout
+                    if (!this.hasResponded && this.history.length > this.nLevel) {
+                        this.evaluateTimeout();
+                    }
+                    
+                    this.callbacks.clearStimulus();
+                    setTimeout(() => this.nextTurn(), 500);
+                }, this.intervalTime);
+            }
+
+            evaluateTimeout() {
+                const index = this.history.length - 1;
+                if (index < this.nLevel) return;
+
+                const target = this.history[index - this.nLevel];
+                const current = this.history[index];
+
+                // Contar como error si había match y no respondió
+                if (target.pos === current.pos) {
+                    this.totalErrors++;
+                    this.callbacks.onScoreUpdate(this.totalHits, this.totalErrors);
+                }
+
+                if (target.letter === current.letter) {
+                    this.totalErrors++;
+                    this.callbacks.onScoreUpdate(this.totalHits, this.totalErrors);
+                }
+            }
+
+            evaluatePreviousTurn() {
+                const index = this.history.length - 1;
+                if (index < this.nLevel) return;
+
+                const target = this.history[index - this.nLevel];
+                const current = this.history[index];
+
+                // Evaluar posición
+                if (target.pos === current.pos) {
+                    if (this.inputState.pos) {
+                        this.totalHits++;
+                    } else {
+                        this.totalErrors++; // Miss
+                    }
+                } else {
+                    if (this.inputState.pos) {
+                        this.totalErrors++; // False alarm
+                    }
+                }
+
+                // Evaluar audio
+                if (target.letter === current.letter) {
+                    if (this.inputState.audio) {
+                        this.totalHits++;
+                    } else {
+                        this.totalErrors++; // Miss
+                    }
+                } else {
+                    if (this.inputState.audio) {
+                        this.totalErrors++; // False alarm
+                    }
+                }
+
+                this.callbacks.onScoreUpdate(this.totalHits, this.totalErrors);
+            }
+
+            checkMatch(type) {
+                if (!this.isRunning) return;
+                
+                this.hasResponded = true;
+                const rt = Date.now() - this.lastStimulusTime;
+                this.responseTimes.push(rt);
+                
+                if (type === 'position') this.inputState.pos = true;
+                if (type === 'audio') this.inputState.audio = true;
+                this.callbacks.onInputFeedback(type, rt);
+            }
+
+            calculateStats() {
+                const totalTargets = this.totalHits + this.totalErrors;
+                const accuracy = totalTargets === 0 ? 0 : Math.round((this.totalHits / totalTargets) * 100);
+                
+                const avgLatency = this.responseTimes.length > 0 ? 
+                    Math.round(this.responseTimes.reduce((a,b) => a+b, 0) / this.responseTimes.length) : 0;
+                
+                return {
+                    level: this.nLevel,
+                    accuracy: accuracy,
+                    errors: this.totalErrors,
+                    hits: this.totalHits,
+                    mode: this.mode,
+                    avgLatency: avgLatency,
+                    responseTimes: [...this.responseTimes]
+                };
+            }
+        }
+
+        /**
+         * APP MANAGER
+         * Gestor principal de la aplicación
+         */
+        class AppManager {
+            constructor() {
+                this.deviceType = null;
+                this.audio = new AudioController();
+                this.engine = new NBackEngine({
+                    onStimulus: (pos, letter, round, max) => this.updateGameUI(pos, letter, round, max),
+                    clearStimulus: () => this.clearGameUI(),
+                    onInputFeedback: (type, rt) => this.showInputFeedback(type, rt),
+                    onGameEnd: (stats) => this.endGame(stats),
+                    onScoreUpdate: (hits, errors) => this.updateRealtimeScore(hits, errors)
+                });
+                this.chart = null;
+                this.currentLevel = 1;
+                this.config = this.loadConfig();
+                this.navigationStack = ['screen-device-select'];
+            }
+
+            init() {
+                this.generateGrid();
+                this.setupKeyboard();
+                this.setupNavigation();
+            }
+
+            setupNavigation() {
+                window.history.pushState({ screen: 'screen-device-select' }, '', '');
+                
+                window.addEventListener('popstate', (e) => {
+                    e.preventDefault();
+                    
+                    if (this.engine.isRunning) {
+                        this.engine.stop();
+                        this.audio.cancel();
+                    }
+                    
+                    if (this.navigationStack.length > 1) {
+                        this.navigationStack.pop();
+                        const previousScreen = this.navigationStack[this.navigationStack.length - 1];
+                        this.showScreen(previousScreen, false);
+                    } else {
+                        window.history.pushState({ screen: this.navigationStack[0] }, '', '');
+                    }
+                });
+            }
+
+            selectDevice(type) {
+                this.deviceType = type;
+                this.config.deviceType = type;
+                this.saveConfig();
+                this.setupDeviceControls();
+                this.showScreen('screen-home');
+            }
+
+            setupDeviceControls() {
+                if (this.deviceType === 'mobile') {
+                    document.getElementById('desktop-controls').classList.add('hidden');
+                    document.getElementById('mobile-controls').classList.add('active');
+                    document.getElementById('config-controls-title').textContent = 'Controles Táctiles';
+                    document.getElementById('controls-info').innerHTML = `
+                        <p><strong>Modo Smartphone:</strong></p>
+                        <p>📍 Botón Posición (Superior): Toca para marcar coincidencia de ubicación</p>
+                        <p>🔊 Botón Sonido (Inferior): Toca para marcar coincidencia de letra</p>
+                    `;
+                } else {
+                    document.getElementById('desktop-controls').classList.remove('hidden');
+                    document.getElementById('mobile-controls').classList.remove('active');
+                    document.getElementById('config-controls-title').textContent = 'Controles de Teclado';
+                    document.getElementById('controls-info').innerHTML = `
+                        <p><strong>Modo Computador:</strong></p>
+                        <p>▲ Tecla Arriba (Flecha): Posición Match</p>
+                        <p>▼ Tecla Abajo (Flecha): Sonido Match</p>
+                    `;
+                }
+            }
+
+            loadConfig() {
+                const defaultConfig = {
+                    mode: 'standard',
+                    deviceType: null
+                };
+                
+                const saved = localStorage.getItem('nback_config');
+                return saved ? JSON.parse(saved) : defaultConfig;
+            }
+
+            saveConfig() {
+                localStorage.setItem('nback_config', JSON.stringify(this.config));
+            }
+
+            goHome() {
+                if (this.engine.isRunning) {
+                    if (confirm('¿Salir de la sesión actual? El progreso no se guardará.')) {
+                        this.engine.stop();
+                        this.audio.cancel();
+                        this.showScreen('screen-home');
+                    }
+                } else {
+                    this.audio.cancel();
+                    this.showScreen('screen-home');
+                }
+            }
+
+            showScreen(id, addToStack = true) {
+                if (id !== 'screen-game' && this.engine.isRunning) {
+                    this.engine.stop();
+                    this.audio.cancel();
+                }
+                
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                
+                if (addToStack) {
+                    this.navigationStack.push(id);
+                    window.history.pushState({ screen: id }, '', '');
+                }
+            }
+
+            showScientificBasis() {
+                this.showScreen('screen-scientific-basis');
+            }
+
+            showInstructions() {
+                this.showScreen('screen-instructions');
+            }
+
+            showConfig() {
+                this.updateConfigUI();
+                this.showScreen('screen-config');
+            }
+
+            updateConfigUI() {
+                document.getElementById('mode-standard').classList.toggle('selected', this.config.mode === 'standard');
+                document.getElementById('mode-fast').classList.toggle('selected', this.config.mode === 'fast');
+            }
+
+            selectMode(mode) {
+                this.config.mode = mode;
+                this.saveConfig();
+                this.updateConfigUI();
+            }
+
+            generateGrid() {
+                const container = document.getElementById('grid-board');
+                container.innerHTML = '';
+                for (let i = 0; i < 9; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'grid-cell';
+                    div.id = `cell-${i}`;
+                    container.appendChild(div);
+                }
+            }
+
+            startGame() {
+                this.showScreen('screen-game');
+                this.currentLevel = this.determineLevel();
+                document.getElementById('game-level').textContent = `${this.currentLevel}-Back`;
+                
+                const modeText = this.config.mode === 'fast' ? 'Rápido ⚡' : 'Estándar';
+                document.getElementById('game-mode').textContent = modeText;
+                document.getElementById('game-mode').classList.toggle('fast', this.config.mode === 'fast');
+                
+                document.getElementById('visual-letter-feedback').textContent = 'Preparado...';
+                document.getElementById('latency-display').innerHTML = 'Latencia promedio: <strong>-- ms</strong>';
+                
+                // Resetear score en tiempo real
+                document.getElementById('realtime-hits').textContent = '0';
+                document.getElementById('realtime-errors').textContent = '0';
+                
+                this.engine.start(this.currentLevel, this.config.mode);
+            }
+
+            determineLevel() {
+                const history = this.getHistory();
+                if (history.length === 0) return 1;
+                
+                const last = history[history.length - 1];
+                return last.nextLevel || 1;
+            }
+
+            updateRealtimeScore(hits, errors) {
+                document.getElementById('realtime-hits').textContent = hits;
+                document.getElementById('realtime-errors').textContent = errors;
+            }
+
+            updateGameUI(pos, letter, round, max) {
+                document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('active'));
+                const cell = document.getElementById(`cell-${pos}`);
+                if (cell) {
+                    cell.classList.add('active');
+                    cell.textContent = letter;
+                }
+                
+                document.getElementById('visual-letter-feedback').textContent = letter;
+                this.audio.speak(letter);
+                
+                document.getElementById('game-round').textContent = round;
+                document.getElementById('max-rounds').textContent = max;
+                
+                const progress = (round / max) * 100;
+                document.getElementById('game-progress').style.width = `${progress}%`;
+
+                if (this.engine.responseTimes.length > 0) {
+                    const avgRT = Math.round(
+                        this.engine.responseTimes.reduce((a,b) => a+b, 0) / this.engine.responseTimes.length
+                    );
+                    document.getElementById('latency-display').innerHTML = 
+                        `Latencia promedio: <strong>${avgRT} ms</strong>`;
+                }
+
+                document.querySelectorAll('.feedback-btn').forEach(b => b.classList.remove('matched'));
+            }
+
+            clearGameUI() {
+                document.querySelectorAll('.grid-cell').forEach(c => {
+                    c.classList.remove('active');
+                    c.textContent = '';
+                });
+                document.getElementById('visual-letter-feedback').textContent = '⏳';
+            }
+
+            showInputFeedback(type, rt) {
+                const btnId = this.deviceType === 'desktop' ? 
+                    (type === 'position' ? 'btn-pos' : 'btn-audio') :
+                    (type === 'position' ? 'mobile-btn-pos' : 'mobile-btn-audio');
+                const btn = document.getElementById(btnId);
+                if (btn) btn.classList.add('matched');
+            }
+
+            setupKeyboard() {
+                document.addEventListener('keydown', (e) => {
+                    if (!document.getElementById('screen-game').classList.contains('active')) return;
+                    if (this.deviceType !== 'desktop') return;
+                    
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        this.engine.checkMatch('position');
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        this.engine.checkMatch('audio');
+                    }
+                });
+            }
+
+            exitGame() {
+                if (confirm('¿Salir? El progreso no se guardará.')) {
+                    this.engine.stop();
+                    this.audio.cancel();
+                    this.goHome();
+                }
+            }
+
+            endGame(stats) {
+                this.saveData(stats);
+                this.renderResults(stats);
+                this.showScreen('screen-results');
+            }
+
+            saveData(stats) {
+                const history = this.getHistory();
+                
+                // NUEVO: Máximo 2 errores para pasar
+                let nextLevel = stats.level;
+                if (stats.errors <= 2 && stats.level < 10) {
+                    nextLevel = stats.level + 1;
+                } else if (stats.errors > 2 && stats.level > 1) {
+                    nextLevel = stats.level; // Repetir nivel
+                }
+                
+                history.push({
+                    date: new Date().toISOString(),
+                    timestamp: Date.now(),
+                    level: stats.level,
+                    accuracy: stats.accuracy,
+                    errors: stats.errors,
+                    hits: stats.hits,
+                    mode: stats.mode,
+                    avgLatency: stats.avgLatency,
+                    nextLevel: nextLevel
+                });
+                localStorage.setItem('nback_history', JSON.stringify(history));
+            }
+
+            getHistory() {
+                return JSON.parse(localStorage.getItem('nback_history') || '[]');
+            }
+
+            renderResults(stats) {
+                document.getElementById('score-accuracy').textContent = `${stats.accuracy}%`;
+                document.getElementById('score-level').textContent = `${stats.level}`;
+                document.getElementById('score-errors').textContent = stats.errors;
+                document.getElementById('score-latency').textContent = `${stats.avgLatency}ms`;
+                
+                const msgDiv = document.getElementById('feedback-message');
+                const btnDiv = document.getElementById('result-buttons');
+                btnDiv.innerHTML = '';
+                
+                // MENSAJES PERSONALIZADOS SEGÚN ERRORES
+                if (stats.errors === 0) {
+                    msgDiv.className = 'feedback-message feedback-excellent';
+                    msgDiv.innerHTML = '<strong>🎉 ¡EXCELENTE TRABAJO!</strong><br>Has pasado sin errores.';
+                    
+                    if (stats.level < 10) {
+                        btnDiv.innerHTML = `
+                            <button class="btn btn-success" onclick="app.continueToNextLevel()">
+                                ▶️ Nivel ${stats.level + 1}
+                            </button>
+                            <button class="btn btn-secondary" onclick="app.goHome()">🏠 Menú</button>
+                        `;
+                        setTimeout(() => app.continueToNextLevel(), 2500);
+                    } else {
+                        btnDiv.innerHTML = `
+                            <button class="btn" onclick="app.goHome()">🏠 Menú</button>
+                        `;
+                        msgDiv.innerHTML += '<br><br><strong>¡Has completado todos los niveles!</strong>';
+                    }
+                } else if (stats.errors === 1) {
+                    msgDiv.className = 'feedback-message feedback-good';
+                    msgDiv.innerHTML = `<strong>✅ Pasar a siguiente nivel</strong><br>Tuviste 1 error.`;
+                    
+                    btnDiv.innerHTML = stats.level < 10 ? `
+                        <button class="btn btn-success" onclick="app.continueToNextLevel()">
+                            ✅ Sí, Nivel ${stats.level + 1}
+                        </button>
+                        <button class="btn btn-warning" onclick="app.repeatLevel()">
+                            🔄 Repetir Nivel ${stats.level}
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.goHome()">
+                            🏠 Menú
+                        </button>
+                    ` : `
+                        <button class="btn btn-warning" onclick="app.repeatLevel()">
+                            🔄 Repetir Nivel ${stats.level}
+                        </button>
+                        <button class="btn" onclick="app.goHome()">🏠 Menú</button>
+                    `;
+                } else if (stats.errors === 2) {
+                    msgDiv.className = 'feedback-message feedback-good';
+                    msgDiv.innerHTML = `<strong>✅ Pasar a siguiente nivel</strong><br>Tuviste 2 errores.`;
+                    
+                    btnDiv.innerHTML = stats.level < 10 ? `
+                        <button class="btn btn-success" onclick="app.continueToNextLevel()">
+                            ✅ Sí, Nivel ${stats.level + 1}
+                        </button>
+                        <button class="btn btn-warning" onclick="app.repeatLevel()">
+                            🔄 Repetir Nivel ${stats.level}
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.goHome()">
+                            🏠 Menú
+                        </button>
+                    ` : `
+                        <button class="btn btn-warning" onclick="app.repeatLevel()">
+                            🔄 Repetir Nivel ${stats.level}
+                        </button>
+                        <button class="btn" onclick="app.goHome()">🏠 Menú</button>
+                    `;
+                } else {
+                    msgDiv.className = 'feedback-message feedback-improve';
+                    msgDiv.innerHTML = `<strong>⚠️ Has cometido ${stats.errors} errores</strong><br>Debes repetir este nivel (máximo 2 errores para avanzar).`;
+                    
+                    btnDiv.innerHTML = `
+                        <button class="btn btn-warning" onclick="app.repeatLevel()">
+                            🔄 Repetir Nivel ${stats.level}
+                        </button>
+                        <button class="btn btn-secondary" onclick="app.goHome()">
+                            🏠 Menú
+                        </button>
+                    `;
+                }
+
+                this.renderChart();
+            }
+
+            continueToNextLevel() {
+                if (this.currentLevel < 10) {
+                    this.currentLevel++;
+                    this.startGame();
+                } else {
+                    this.goHome();
+                }
+            }
+
+            repeatLevel() {
+                this.startGame();
+            }
+
+            renderChart() {
+                const ctx = document.getElementById('performanceChart').getContext('2d');
+                const history = this.getHistory();
+                const recent = history.slice(-10);
+                
+                if (this.chart) {
+                    this.chart.destroy();
+                }
+
+                const datasets = [
+                    {
+                        label: 'Precisión (%)',
+                        data: recent.map(h => h.accuracy),
+                        borderColor: '#3a7bd5',
+                        backgroundColor: 'rgba(58, 123, 213, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Nivel (×10)',
+                        data: recent.map(h => h.level * 10),
+                        borderColor: '#00d2ff',
+                        borderDash: [5, 5],
+                        fill: false,
+                        borderWidth: 2,
+                        yAxisID: 'y'
+                    }
+                ];
+
+                if (recent.some(h => h.avgLatency)) {
+                    datasets.push({
+                        label: 'Latencia (ms/10)',
+                        data: recent.map(h => (h.avgLatency || 0) / 10),
+                        borderColor: '#ff9800',
+                        borderDash: [2, 2],
+                        fill: false,
+                        borderWidth: 2,
+                        yAxisID: 'y'
+                    });
+                }
+
+                this.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: recent.map((_, i) => `S${i + 1}`),
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            title: {
+                                display: true,
+                                text: 'Evolución del Desempeño (Últimas 10 Sesiones)',
+                                font: { size: 14, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: { 
+                                beginAtZero: true, 
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Porcentaje / Nivel×10 / Latencia/10'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            showHistory() {
+                const history = this.getHistory();
+                const statsContainer = document.getElementById('history-stats');
+                const contentContainer = document.getElementById('history-content');
+                
+                if (history.length === 0) {
+                    contentContainer.innerHTML = '<p style="text-align: center; color: #888; padding: 2rem;">No hay sesiones registradas.</p>';
+                    statsContainer.innerHTML = '';
+                } else {
+                    const avgAccuracy = Math.round(history.reduce((acc, h) => acc + h.accuracy, 0) / history.length);
+                    const maxLevel = Math.max(...history.map(h => h.level));
+                    const avgLatency = history.filter(h => h.avgLatency).length > 0 ?
+                        Math.round(history.filter(h => h.avgLatency).reduce((acc, h) => acc + h.avgLatency, 0) / 
+                        history.filter(h => h.avgLatency).length) : 0;
+                    
+                    statsContainer.innerHTML = `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">${avgAccuracy}%</div>
+                                <div class="stat-label">Precisión Media</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${maxLevel}</div>
+                                <div class="stat-label">Nivel Máximo</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${history.length}</div>
+                                <div class="stat-label">Sesiones</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${avgLatency > 0 ? avgLatency + 'ms' : 'N/A'}</div>
+                                <div class="stat-label">Latencia Media</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    let html = '<div style="overflow-x: auto;"><table><thead><tr>';
+                    html += '<th>Fecha</th><th>Nivel</th><th>Precisión</th><th>Errores</th><th>Latencia</th><th>Modo</th>';
+                    html += '</tr></thead><tbody>';
+                    
+                    history.slice().reverse().forEach(session => {
+                        const date = new Date(session.date).toLocaleString('es-CL', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        const modeIcon = session.mode === 'fast' ? '⚡' : '🐢';
+                        const accuracyColor = session.accuracy >= 80 ? '#4caf50' : session.accuracy >= 50 ? '#ff9800' : '#f44336';
+                        html += `<tr>`;
+                        html += `<td>${date}</td>`;
+                        html += `<td>${session.level}-Back</td>`;
+                        html += `<td style="color: ${accuracyColor}; font-weight: bold;">${session.accuracy}%</td>`;
+                        html += `<td>${session.errors}</td>`;
+                        html += `<td>${session.avgLatency ? session.avgLatency + 'ms' : '-'}</td>`;
+                        html += `<td>${modeIcon}</td>`;
+                        html += `</tr>`;
+                    });
+                    
+                    html += '</tbody></table></div>';
+                    contentContainer.innerHTML = html;
+                }
+                
+                this.showScreen('screen-history');
+            }
+
+            clearHistory() {
+                if (confirm('¿Eliminar todo el historial?\n\nEsta acción no se puede deshacer.')) {
+                    localStorage.removeItem('nback_history');
+                    this.showHistory();
+                }
+            }
+
+            exportData() {
+                const history = this.getHistory();
+                const config = this.config;
+                
+                const exportData = {
+                    metadata: {
+                        exportDate: new Date().toISOString(),
+                        version: '1.0',
+                        deviceType: config.deviceType,
+                        creator: 'Vicente Serey',
+                        note: 'Sistema de entrenamiento dual n-back'
+                    },
+                    config: config,
+                    sessions: history,
+                    statistics: {
+                        totalSessions: history.length,
+                        averageAccuracy: history.length > 0 ? 
+                            Math.round(history.reduce((acc, h) => acc + h.accuracy, 0) / history.length) : 0,
+                        maxLevel: history.length > 0 ? Math.max(...history.map(h => h.level)) : 0,
+                        averageLatency: history.filter(h => h.avgLatency).length > 0 ?
+                            Math.round(history.filter(h => h.avgLatency).reduce((acc, h) => acc + h.avgLatency, 0) / 
+                            history.filter(h => h.avgLatency).length) : 0
+                    }
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `dual-nback-data-${Date.now()}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                alert('✅ Datos exportados exitosamente');
+            }
+        }
+
+        // Initialize app
+        const app = new AppManager();
+        window.addEventListener('load', () => {
+            app.init();
+        });
+
+        // Prevent accidental closure
+        window.addEventListener('beforeunload', (e) => {
+            if (app.engine.isRunning) {
+                e.preventDefault();
+                e.returnValue = '¿Salir? Se perderá el progreso.';
+            }
+        });
+
+        // Cleanup on visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && app.engine.isRunning) {
+                app.engine.stop();
+                app.audio.cancel();
+            }
+        });
+    </script>
+</body>
+</html>
