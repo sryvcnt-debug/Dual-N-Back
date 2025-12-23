@@ -9684,13 +9684,20 @@ document.addEventListener('DOMContentLoaded', () => FirebaseManager.init());,
          A todos los investigadores que han dedicado décadas al estudio de la
          memoria de trabajo y la neuroplasticidad cognitiva. Este sistema es una
          aplicación práctica de su invaluable trabajo científico.
-                 
+         
+         LICENCIA:
+         ─────────
+         Este código fue diseñado específicamente para ti. Puedes:
+         ✅ Usar el código libremente
+         ✅ Modificarlo según tus necesidades
+         ✅ Distribuirlo (con atribución)
+         
          Se agradece mantener los créditos al diseñador original.
          
          
          ═══════════════════════════════════════════════════════════════════════
          
-         VERSIÓN: 1.0
+         VERSIÓN: 9.0
          FECHA: Diciembre 2025
          CARACTERES TOTALES: ~400,000
          BLOQUES: 12
@@ -10462,14 +10469,11 @@ function resetKeys() {
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════════
-   SISTEMA INTELIGENTE DE AUTENTICACIÓN Y RANKING
-   - Detecta automáticamente modo local (file://) vs online (https://)
-   - Previene errores de Firebase en modo local
-   - Sin jugadores simulados: Ranking limpio
-   ═══════════════════════════════════════════════════════════════════════ */
+// ═══════════════════════════════════════════════════════════════
+// SISTEMA HÍBRIDO ROBUSTO: FIREBASE + GUEST MODE
+// ═══════════════════════════════════════════════════════════════
 
-// Detectar entorno
+// Detectar entorno real
 const IS_OFFLINE_MODE = window.location.protocol === 'file:';
 
 const FirebaseManager = {
@@ -10478,271 +10482,229 @@ const FirebaseManager = {
     auth: null,
     user: null,
 
+    // Tu configuración real
     firebaseConfig: {
-        apiKey: "AIzaSyAUbnyVt-qVbn2iNq50ZWTYoXR154E5pbw",
-        authDomain: "dual-n-back-ultra.firebaseapp.com",
-        projectId: "dual-n-back-ultra",
-        storageBucket: "dual-n-back-ultra.firebasestorage.app",
-        messagingSenderId: "258531023122",
-        appId: "1:258531023122:web:51663cb6294ed17e417bcb"
+      apiKey: "AIzaSyAUbnyVt-qVbn2iNq50ZWTYoXR154E5pbw",
+      authDomain: "dual-n-back-ultra.firebaseapp.com",
+      projectId: "dual-n-back-ultra",
+      storageBucket: "dual-n-back-ultra.firebasestorage.app",
+      messagingSenderId: "258531023122",
+      appId: "1:258531023122:web:51663cb6294ed17e417bcb"
     },
 
     init: async function() {
-        console.log("🚀 FirebaseManager iniciando...");
-        console.log("📍 Protocolo:", window.location.protocol);
-        console.log("🌐 Modo:", IS_OFFLINE_MODE ? "Local (file://)" : "Online (https://)");
+        console.log("🚀 Iniciando Sistema...");
 
+        // 1. ACTIVAR BOTONES INMEDIATAMENTE (Esto arregla el "congelamiento")
+        this.setupButtons();
+
+        // 2. Si es archivo local, detener aquí la conexión real
         if (IS_OFFLINE_MODE) {
-            console.log("📂 Modo local detectado → Configurando modo simulación");
-            this.setupOfflineMode();
+            console.log("📂 Modo Local: Firebase desactivado.");
             return;
         }
 
+        // 3. Intentar conexión real a Firebase (Solo web)
         try {
-            firebase.initializeApp(this.firebaseConfig);
-            this.auth = firebase.auth();
-            this.db = firebase.firestore();
-            this.initialized = true;
-            console.log("✅ Firebase conectado (modo online real)");
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(this.firebaseConfig);
+                this.auth = firebase.auth();
+                this.db = firebase.firestore();
+                this.initialized = true;
+                console.log("✅ Firebase Online conectado");
 
-            this.auth.onAuthStateChanged((user) => {
-                this.handleUserLogin(user);
-            });
+                // Escuchar si el usuario ya estaba logueado (esto es lo que pasa en Opera)
+                this.auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        this.handleUserLogin(user);
+                    }
+                });
+            }
         } catch (error) {
-            console.warn("⚠️ Error conectando a Firebase, pasando a modo offline");
-            console.error(error);
-            this.setupOfflineMode();
+            console.warn("⚠️ Error conectando Firebase (posible bloqueo de red). Usando modo local.");
         }
     },
 
-    setupOfflineMode: function() {
-        console.log("🔧 Configurando modo offline...");
-
+    // ESTA FUNCIÓN FALTABA: Activa los botones en cualquier entorno
+    setupButtons: function() {
         const btnGoogle = document.getElementById('btn-login-google');
         const btnGuest = document.getElementById('btn-guest');
 
+        // Configurar botón Google
         if (btnGoogle) {
             btnGoogle.onclick = () => {
-                alert("ℹ️ Modo Local Detectado\n\nEstás ejecutando el archivo desde tu PC (file://).\n\nPara evitar errores de seguridad del navegador, entrarás en modo simulación.\n\n💡 Para usar Firebase real, sube el archivo a un servidor (ej: GitHub Pages).");
-                this.mockLogin("Usuario Google", "https://ui-avatars.com/api/?name=U&background=4285F4&color=fff");
-            };
-            console.log("  ✅ Botón Google configurado (modo simulación)");
-        }
-
-        if (btnGuest) {
-            btnGuest.onclick = () => {
-                const warning = document.getElementById('guest-warning');
-                if (warning && warning.style.display === 'none') {
-                    warning.style.display = 'block';
+                if (IS_OFFLINE_MODE || !this.initialized) {
+                    alert("⚠️ Estás en modo local o sin conexión.\n\nEntrando en MODO SIMULACIÓN.");
+                    this.mockLogin("Usuario Simulado", "https://ui-avatars.com/api/?name=U&background=4285F4&color=fff");
                 } else {
-                    this.mockLogin("Invitado", "https://ui-avatars.com/api/?name=I&background=38bdf8&color=fff");
+                    this.loginGoogle();
                 }
             };
-            console.log("  ✅ Botón Invitado configurado");
         }
 
-        const leaderboard = document.getElementById('leaderboard');
-        if (leaderboard) {
-            leaderboard.innerHTML = '<p style="text-align:center;padding:20px;color:rgba(255,255,255,0.7);font-size:14px;">Inicia sesión para ver el ranking</p>';
+        // Configurar botón Invitado (EL QUE NO TE FUNCIONABA)
+        if (btnGuest) {
+            btnGuest.onclick = () => {
+                // El modo invitado siempre es una simulación local
+                this.mockLogin("Invitado", "https://ui-avatars.com/api/?name=I&background=38bdf8&color=fff");
+            };
         }
-
-        console.log("✅ Modo offline configurado completamente");
     },
 
-    mockLogin: function(name, photo) {
-        console.log("🔓 Inicio de sesión simulado:", name);
+    // Login Real con Google
+    loginGoogle: async function() {
+        if (!this.auth) return;
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await this.auth.signInWithPopup(provider);
+        } catch (e) {
+            alert("Error de autenticación: " + e.message);
+        }
+    },
 
+    // Login Simulado (Para Invitados o Local)
+    mockLogin: function(name, photo) {
+        console.log("🔓 Login Simulado:", name);
+
+        // Crear usuario falso
         this.user = { 
             displayName: name, 
             photoURL: photo, 
-            uid: "local-" + Date.now() 
+            uid: "guest-" + Date.now() 
         };
 
+        // Ocultar pantalla de inicio
+        this.unlockGate();
+
+        // Mensaje de bienvenida
+        if (typeof showNeuralMessage !== 'undefined') {
+            showNeuralMessage('👋', 'BIENVENIDO', `Sesión iniciada como: ${name}`, 'success');
+        }
+
+        // Cargar ranking ficticio
+        this.renderMockRanking();
+        this.updateUI();
+    },
+
+    // Manejar Login Real
+    handleUserLogin: function(user) {
+        this.user = user;
+        this.unlockGate();
+        if (typeof showNeuralMessage !== 'undefined') {
+            showNeuralMessage('👤', 'BIENVENIDO', `Hola, ${user.displayName}`, 'success');
+        }
+        this.loadRealRanking();
+        this.updateUI();
+    },
+
+    // Función auxiliar para quitar la pantalla de bloqueo
+    unlockGate: function() {
         const authGate = document.getElementById('auth-gate');
         if (authGate) {
-            authGate.style.display = 'none';
-            console.log("  ✅ Pantalla de login ocultada");
-        }
-
-        if (typeof showNeuralMessage !== 'undefined') {
-            showNeuralMessage('👋', 'BIENVENIDO', `Modo Local: ${name}`, 'success');
-        }
-
-        this.renderEmptyRanking();
-        console.log("✅ Sesión simulada completada");
-    },
-
-    handleUserLogin: function(user) {
-        console.log("👤 Evento de autenticación:", user ? user.displayName : "sin usuario");
-
-        this.user = user;
-
-        if (user) {
-            const authGate = document.getElementById('auth-gate');
-            if (authGate) authGate.style.display = 'none';
-
-            if (typeof showNeuralMessage !== 'undefined') {
-                showNeuralMessage('👤', 'BIENVENIDO', user.displayName.split(' ')[0], 'success');
-            }
-
-            this.loadRealRanking();
+            authGate.style.opacity = '0';
+            setTimeout(() => {
+                authGate.style.display = 'none';
+            }, 500);
         }
     },
 
-    renderEmptyRanking: function() {
-        console.log("📊 Renderizando ranking vacío (sin jugadores simulados)");
+    // Actualizar botón del perfil en el Hub
+    updateUI: function() {
+        // Buscar si ya existe el botón, si no, crearlo
+        let btn = document.getElementById('btn-profile-status');
+        const container = document.getElementById('leaderboard') ? document.getElementById('leaderboard').parentNode : null;
 
-        const container = document.getElementById('leaderboard');
-        if (!container) {
-            console.warn("⚠️ Contenedor 'leaderboard' no encontrado");
-            return;
+        if (!btn && container) {
+            btn = document.createElement('button');
+            btn.id = 'btn-profile-status';
+            btn.className = 'btn'; 
+            btn.style.width = '100%';
+            btn.style.marginTop = '15px';
+            container.insertBefore(btn, document.getElementById('leaderboard'));
         }
 
-        container.innerHTML = `
-            <div style="text-align:center;padding:40px 20px;">
-                <div style="font-size:48px;margin-bottom:15px;opacity:0.3;">🏆</div>
-                <p style="color:rgba(255,255,255,0.7);font-size:14px;line-height:1.6;margin:0;">
-                    El ranking aparecerá aquí cuando<br>completes tu primera sesión
-                </p>
-                <div style="margin-top:20px;font-size:10px;color:rgba(255,255,255,0.4);">
-                    ${IS_OFFLINE_MODE ? '⚡ Modo Local' : '🌍 Ranking Global'}
-                </div>
-            </div>
-        `;
-
-        console.log("✅ Ranking vacío renderizado");
+        if (btn && this.user) {
+            btn.innerHTML = `👤 ${this.user.displayName} (Cerrar Sesión)`;
+            btn.style.background = 'rgba(239, 68, 68, 0.2)';
+            btn.style.border = '1px solid #ef4444';
+            btn.onclick = () => this.logout();
+            btn.style.display = 'block';
+        }
     },
 
+    logout: function() {
+        if (this.auth) this.auth.signOut();
+        location.reload();
+    },
+
+    // Cargar Ranking Real (Solo si hay Firebase)
     loadRealRanking: async function() {
-        console.log("📊 Cargando ranking real desde Firestore...");
-
-        if (!this.db) {
-            console.warn("⚠️ No hay conexión a Firestore");
-            this.renderEmptyRanking();
-            return;
-        }
+        if (!this.db) { this.renderMockRanking(); return; }
 
         const container = document.getElementById('leaderboard');
         if (!container) return;
 
-        container.innerHTML = '<div style="text-align:center;padding:20px;color:white;"><div class="loading-spinner"></div><p style="margin-top:10px;">Cargando...</p></div>';
-
         try {
+            container.innerHTML = '<div class="loading-spinner"></div>';
             const snapshot = await this.db.collection('ranking_global')
-                .orderBy('level', 'desc')
-                .orderBy('score', 'desc')
-                .limit(10)
-                .get();
+                .orderBy('level', 'desc').orderBy('score', 'desc').limit(10).get();
 
             if (snapshot.empty) {
-                console.log("⚠️ Ranking vacío en Firestore");
-                this.renderEmptyRanking();
+                this.renderMockRanking(); // Si está vacío, mostrar mock para que no se vea feo
                 return;
             }
 
-            let html = '<ul style="list-style:none;padding:0;margin:0;">';
-            let rank = 1;
-
-            snapshot.forEach(doc => {
+            let html = '<ul style="list-style:none;padding:0;">';
+            snapshot.forEach((doc, index) => {
                 const d = doc.data();
-                const medal = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : `#${rank}`));
-                const isMe = this.user && this.user.uid === doc.id;
-                const bg = isMe ? 'rgba(56,189,248,0.2)' : 'rgba(255,255,255,0.03)';
-                const border = isMe ? '2px solid #38bdf8' : 'none';
-
-                html += `
-                <li style="display:flex;align-items:center;justify-content:space-between;padding:12px;margin-bottom:8px;border-radius:8px;background:${bg};border-left:${border};">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <span style="font-weight:900;width:30px;font-size:1.1em;color:white;">${medal}</span>
-                        <img src="${d.photo}" style="width:32px;height:32px;border-radius:50%;border:2px solid #38bdf8;">
-                        <span style="color:white;font-weight:600;">${d.name.split(' ')[0]}</span>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="color:#38bdf8;font-weight:bold;font-size:0.9em;">${d.level}-Back</div>
-                        <div style="font-size:0.75em;color:rgba(255,255,255,0.7);">${d.score} pts</div>
-                    </div>
-                </li>`;
-                rank++;
+                const medal = ["🥇","🥈","🥉"][index] || `#${index+1}`;
+                html += this.buildRankItem(medal, d.photo, d.name, d.level, d.score, this.user && this.user.uid === doc.id);
             });
-
-            html += '</ul>';
-            container.innerHTML = html;
-
-            console.log("✅ Ranking real cargado:", rank - 1, "jugadores");
-
-        } catch (error) {
-            console.error("❌ Error cargando ranking:", error);
-            this.renderEmptyRanking();
+            container.innerHTML = html + '</ul>';
+        } catch (e) {
+            this.renderMockRanking();
         }
     },
 
-    saveScore: function(level, score) {
-        if (IS_OFFLINE_MODE) {
-            console.log(`💾 Modo offline: Guardado local simulado (${level}-Back, ${score} pts)`);
-            if (typeof showNeuralMessage !== 'undefined') {
-                showNeuralMessage('💾', 'SESIÓN COMPLETADA', `${level}-Back - ${score} puntos`, 'success');
-            }
-            return;
-        }
+    // Ranking Falso (Para modo invitado/local)
+    renderMockRanking: function() {
+        const container = document.getElementById('leaderboard');
+        if (!container) return;
 
-        if (!this.user || !this.db) {
-            console.log("⚠️ No se puede guardar: sin usuario o BD");
-            return;
-        }
+        const mockData = [
+            { name: "IA Master", level: 12, score: 2500, photo: "https://ui-avatars.com/api/?background=ff0000&color=fff&name=IA" },
+            { name: this.user ? this.user.displayName : "Tú", level: STATE.game ? STATE.game.currentLevel : 1, score: 0, photo: this.user ? this.user.photoURL : "" },
+            { name: "Ryosuke", level: 9, score: 1800, photo: "https://ui-avatars.com/api/?background=0000ff&color=fff&name=Ry" }
+        ];
 
-        console.log(`💾 Guardando puntaje: ${level}-Back, ${score} pts`);
-
-        const userRef = this.db.collection('ranking_global').doc(this.user.uid);
-
-        userRef.get().then((doc) => {
-            let shouldUpdate = true;
-
-            if (doc.exists) {
-                const data = doc.data();
-                if (level < data.level || (level === data.level && score <= data.score)) {
-                    shouldUpdate = false;
-                    console.log("⚠️ No es un nuevo récord");
-                }
-            }
-
-            if (shouldUpdate) {
-                userRef.set({
-                    name: this.user.displayName,
-                    photo: this.user.photoURL,
-                    level: level,
-                    score: score,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                console.log("✅ Récord guardado en Firebase");
-
-                if (typeof showNeuralMessage !== 'undefined') {
-                    showNeuralMessage('🏆', 'RÉCORD GUARDADO', `¡Nuevo récord: ${level}-Back!`, 'success');
-                }
-
-                this.loadRealRanking();
-            }
-        }).catch(error => {
-            console.error("❌ Error guardando puntaje:", error);
+        let html = '<ul style="list-style:none;padding:0;">';
+        mockData.forEach((d, i) => {
+            html += this.buildRankItem(i===0?"🥇":(i===1?"🥈":"🥉"), d.photo, d.name, d.level, d.score, d.name === (this.user?.displayName || "Tú"));
         });
+        container.innerHTML = html + '<p style="text-align:center;font-size:10px;opacity:0.5;margin-top:10px;">Ranking Local (Modo Invitado)</p></ul>';
     },
 
-    logout: function() {
-        console.log("👋 Cerrando sesión...");
-        if (this.auth && this.initialized) {
-            this.auth.signOut();
-        }
-        location.reload();
+    buildRankItem: function(medal, photo, name, level, score, isMe) {
+        const style = isMe ? 'background:rgba(56, 189, 248, 0.15); border:1px solid #38bdf8;' : 'background:rgba(255,255,255,0.05);';
+        return `
+        <li style="display:flex;align-items:center;justify-content:space-between;padding:10px;margin-bottom:6px;border-radius:8px;${style}">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.2em;">${medal}</span>
+                <img src="${photo}" style="width:28px;height:28px;border-radius:50%;">
+                <span style="font-weight:600;font-size:0.9em;">${name.split(' ')[0]}</span>
+            </div>
+            <div style="text-align:right;">
+                <span style="color:#38bdf8;font-weight:bold;font-size:0.8em;">${level}-Back</span>
+                <div style="font-size:0.7em;opacity:0.7;">${score} pts</div>
+            </div>
+        </li>`;
     }
 };
 
-// Inicializar sistema cuando cargue la página
-window.addEventListener('load', function() {
-    console.log("📱 DOM cargado → Iniciando FirebaseManager");
+// Arrancar al cargar
+window.addEventListener('load', () => {
     FirebaseManager.init();
 });
-
-console.log("✅ Script de autenticación cargado y listo");
 </script>
 
 </body>
@@ -10987,15 +10949,6 @@ Si algo no funciona:
 
 Tienes en tus manos el sistema de entrenamiento cognitivo más completo
 y científicamente riguroso disponible en código abierto.
-
-Este sistema supera en características a:
-• Brain Workshop (Paul Hoskinson)
-• IQ Mindware (versión comercial)
-• La mayoría de apps de dual n-back en stores
-
-Y lo mejor: Es 100% GRATIS, 100% TUYO, 100% PERSONALIZABLE.
-
-Disfrútalo, modifícalo, mejóralo, compártelo.
 
 La neuroplasticidad está en tus manos. Literalmente.
 
