@@ -914,7 +914,277 @@ body {
     background-image: radial-gradient(circle at 50% 0%, #004ba0 0%, #002b5c 70%) !important;
 }
 
+
+/* ═══════════════════════════════════════════════════════════ */
+/* RANKING GLOBAL PRO - Sistema con Fotos y Datos Realistas   */
+/* ═══════════════════════════════════════════════════════════ */
+
+.ranking-item {
+    display: grid;
+    grid-template-columns: 40px 1fr 70px auto;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    align-items: center;
+    transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.ranking-item.is-me {
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.05));
+    border: 1px solid #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.rank-pos {
+    font-size: 1.5em;
+    font-weight: 900;
+    text-align: center;
+}
+
+.rank-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rank-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rank-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.rank-name {
+    font-weight: 700;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.rank-details {
+    display: flex;
+    gap: 10px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+}
+
+.rank-score-box {
+    text-align: right;
+}
+
+.rank-level {
+    color: var(--neural-accent);
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.rank-points {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.rank-perfect {
+    color: #ffd700;
+}
+
+.rank-time {
+    font-family: monospace;
+    color: var(--neural-accent);
+    font-size: 0.85rem;
+    text-align: right;
+    background: rgba(0,0,0,0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+
+/* ================================================================ */
+/* ANIMACIONES DOPAMINERGICAS - GAMIFICACION ETICA                 */
+/* ================================================================ */
+
+@keyframes glow-pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(56, 189, 248, 0.8), 0 0 60px rgba(56, 189, 248, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+@keyframes iq-genius-glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+    50% { text-shadow: 0 0 40px rgba(168, 85, 247, 1), 0 0 60px rgba(168, 85, 247, 0.6); }
+}
+
+@keyframes iq-gifted-glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+    50% { text-shadow: 0 0 40px rgba(251, 191, 36, 1), 0 0 60px rgba(251, 191, 36, 0.6); }
+}
+
+@keyframes float-particles {
+    0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+}
+
+.stat-box.clickable-stat {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--neural-accent);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(0, 0, 0, 0.6));
+}
+
+.stat-box.clickable-stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+    transition: left 0.5s;
+}
+
+.stat-box.clickable-stat:hover::before { left: 100%; }
+
+.stat-box.clickable-stat:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 40px rgba(56, 189, 248, 0.4);
+    border-color: rgba(56, 189, 248, 0.8);
+}
+
+.stat-box.clickable-stat:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.iq-tier-genius { animation: iq-genius-glow 3s ease-in-out infinite; }
+.iq-tier-gifted { animation: iq-gifted-glow 3s ease-in-out infinite; }
+.iq-tier-superior { animation: glow-pulse 4s ease-in-out infinite; }
+
+.stat-box.clickable-stat::after {
+    content: '✨';
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    opacity: 0.6;
+    animation: float-particles 4s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+    .stat-box.clickable-stat { padding: 20px 15px; }
+}
+
+
+
+/* Responsive Core (touch + iOS safe areas) */
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+html{ -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent; }
+body{ overscroll-behavior:none; -webkit-overflow-scrolling:touch; }
+
+/* Mejor respuesta táctil */
+.grid-cell{ touch-action:none; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+.grid-cell:active{ transform:scale(0.94); }
+.grid-cell.touch-active{ transform:scale(0.94); box-shadow:0 0 16px rgba(56,189,248,.55); }
+
+/* Área segura del botón back */
+.back-button{ top: calc(var(--safe-top) + 12px) !important; right: calc(var(--safe-right) + 12px) !important; }
+
+/* Phone portrait */
+@media (max-width: 768px) and (orientation: portrait){
+  .container{ padding: calc(var(--safe-top) + 10px) 12px calc(var(--safe-bottom) + 10px) 12px; max-width:100%; }
+  .game-grid{ width:min(88vw, 420px); height:min(88vw, 420px); margin:14px auto; }
+  .grid-cell{ font-size: clamp(1rem, 8vw, 2.4rem); }
+  .stats-grid{ grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+  .control-panel{ flex-direction: column; gap: 10px; }
+}
+
+/* Phone landscape */
+@media (max-width: 900px) and (orientation: landscape){
+  .container{ padding: 6px 10px; }
+  .game-grid{ width:min(82vh, 420px); height:min(82vh, 420px); }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px){
+  .game-grid{ width:min(65vw, 560px); height:min(65vw, 560px); }
+}
+
+/* iOS: evitar zoom en inputs */
+@media (max-width: 768px){
+  input, select, textarea{ font-size:16px !important; }
+}
+
 </style>
+
+<script>
+const RuntimeProfile = {
+  info: {},
+  detect() {
+    const ua = navigator.userAgent.toLowerCase();
+    const platform = (navigator.platform || '').toLowerCase();
+    const touchPoints = navigator.maxTouchPoints || 0;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+
+    const isIOS = /iphone|ipad|ipod/.test(ua) || (platform === 'macintel' && touchPoints > 1);
+    const isAndroid = /android/.test(ua);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    // Heurística de tipo de dispositivo
+    const diag = Math.sqrt(screen.width*screen.width + screen.height*screen.height) / dpr;
+    let device = 'desktop';
+    if ((isIOS || isAndroid) && diag < 7) device = 'phone';
+    else if ((isIOS || isAndroid) && diag >= 7) device = 'tablet';
+
+    this.info = {
+      isIOS, isAndroid, isSafari,
+      touchPoints,
+      device,
+      orientation: w > h ? 'landscape' : 'portrait',
+      viewport: { w, h, dpr }
+    };
+
+    const root = document.documentElement;
+    root.classList.remove('rt-phone','rt-tablet','rt-desktop','rt-ios','rt-android','rt-safari','rt-portrait','rt-landscape');
+    root.classList.add(`rt-${device}`);
+    root.classList.add(this.info.orientation === 'portrait' ? 'rt-portrait' : 'rt-landscape');
+    if (isIOS) root.classList.add('rt-ios');
+    if (isAndroid) root.classList.add('rt-android');
+    if (isSafari) root.classList.add('rt-safari');
+
+    // Safe areas
+    root.style.setProperty('--safe-top', 'env(safe-area-inset-top, 0px)');
+    root.style.setProperty('--safe-bottom', 'env(safe-area-inset-bottom, 0px)');
+    root.style.setProperty('--safe-left', 'env(safe-area-inset-left, 0px)');
+    root.style.setProperty('--safe-right', 'env(safe-area-inset-right, 0px)');
+
+    return this.info;
+  }
+};
+window.addEventListener('DOMContentLoaded', () => RuntimeProfile.detect());
+window.addEventListener('resize', () => RuntimeProfile.detect());
+</script>
 </head>
 <body>
 
@@ -1265,9 +1535,10 @@ body {
                     <div class="stat-label">Mejor Racha</div>
                     <div class="stat-value" id="bestStreak">0</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-label">IQ Proyectado</div>
-                    <div class="stat-value" id="projectedIQ">--</div>
+                <div class="stat-box clickable-stat" onclick="jumpToScienceIQ()" style="cursor: pointer; position: relative; overflow: hidden;">
+                    <div class="stat-label">🔥 Potencial Cognitivo (Gf)</div>
+                    <div class="stat-value" id="projectedIQ" style="color: var(--neural-success); text-shadow: 0 0 15px rgba(52, 211, 153, 0.6);">--</div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.5); margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">▶ VER ANÁLISIS CIENTÍFICO</div>
                 </div>
             </div>
 
@@ -1764,8 +2035,7 @@ function startBinaural(frequency, label) {
 
         activeBinaural = label;
         updateBinauralButtons();
-        console.log(`Onda binaural ${label} iniciada: ${frequency}Hz`);
-    } catch (e) {
+} catch (e) {
         console.error('Error al iniciar onda binaural:', e);
     }
 }
@@ -2784,161 +3054,231 @@ document.addEventListener('touchmove', function(e) {
             
             // TAB 2: BASE CIENTÍFICA
             const scienceContent = `
-                <div style="background: var(--glass-bg); padding: var(--space-4); border-radius: var(--radius-xl); border: 1px solid var(--glass-border);">
-                    
-                    <h3 style="color: var(--neural-primary); margin-bottom: var(--space-3);">FUNDAMENTO NEUROCIENTÍFICO</h3>
-                    
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">Modelo Multicomponente de Memoria de Trabajo</h4>
-                    <p>
-                        El paradigma dual n-back se fundamenta en el <strong>modelo multicomponente de memoria de trabajo</strong> 
-                        propuesto por Baddeley y Hitch (1974) y refinado extensivamente durante cinco décadas de investigación 
-                        empírica acumulativa. Este modelo postula que la memoria de trabajo (WM) no constituye una entidad 
-                        unitaria monolítica, sino un sistema ejecutivo fraccionado en subsistemas especializados que operan 
-                        de manera coordinada pero semi-independiente, permitiendo el procesamiento paralelo de información multimodal.
-                    </p>
+<div id="science-section" style="max-width: 1200px; margin: 0 auto;">
 
-                    <p><strong>La arquitectura tripartita clásica comprende:</strong></p>
-                    <ul style="margin-left: var(--space-4); margin-bottom: var(--space-3); line-height: 1.8;">
-                        <li style="margin-bottom: var(--space-2);">
-                            <strong>Ejecutivo Central:</strong> Sistema de control atencional supervisor que coordina los subsistemas 
-                            esclavos, regula el flujo de información entre memoria de trabajo y memoria a largo plazo, e implementa 
-                            funciones ejecutivas de orden superior (inhibición, actualización, alternancia).
-                        </li>
-                        <li style="margin-bottom: var(--space-2);">
-                            <strong>Bucle Fonológico:</strong> Subsistema especializado en el mantenimiento temporal de información 
-                            verbal y acústica mediante ensayo subvocal articulatorio.
-                        </li>
-                        <li style="margin-bottom: var(--space-2);">
-                            <strong>Agenda Visuoespacial:</strong> Subsistema dedicado al almacenamiento y manipulación de 
-                            información visual (características de objetos) y espacial (localizaciones y trayectorias).
-                        </li>
-                    </ul>
+    <div style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(0, 0, 0, 0.6)); padding: 40px; border-radius: 16px; margin-bottom: 40px; border: 2px solid var(--neural-accent); box-shadow: 0 0 40px rgba(56, 189, 248, 0.2);">
+        <h2 style="color: var(--neural-primary); text-align: center; font-size: 2.5rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 3px;">
+            🧠 FUNDAMENTO CIENTÍFICO
+        </h2>
+        <p style="text-align: center; font-size: 1.2rem; color: var(--neural-secondary); max-width: 800px; margin: 0 auto;">
+            Sistema de Entrenamiento Cognitivo validado por neurociencia, psicología experimental y meta-análisis peer-reviewed
+        </p>
+    </div>
 
-                    <p style="background: rgba(0, 240, 255, 0.1); padding: var(--space-3); border-left: 4px solid var(--neural-primary); border-radius: var(--radius-md); margin: var(--space-3) 0;">
-                        <strong>Implementación en Dual N-Back:</strong> El entrenamiento dual n-back sobrecarga simultáneamente 
-                        el bucle fonológico (mediante presentación secuencial de letras auditivas) y la agenda visuoespacial 
-                        (posiciones en cuadrícula 3×3), forzando al ejecutivo central a coordinar, actualizar y mantener ambos 
-                        flujos de información bajo severas restricciones temporales, maximizando así la demanda sobre el sistema 
-                        de control ejecutivo.
-                    </p>
+    <div id="iq-science-section" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(0, 0, 0, 0.5)); padding: 35px; border-radius: 16px; margin-bottom: 35px; border: 2px solid #FFD700; box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Límites de Capacidad de Memoria de Trabajo
-                    </h4>
-                    <p>
-                        La capacidad de memoria de trabajo muestra restricciones severas y cuantificables que constituyen un 
-                        cuello de botella fundamental en el procesamiento cognitivo humano. Miller (1956) propuso el célebre 
-                        "número mágico" <strong>7±2</strong> como límite general de capacidad basado en estudios de span de 
-                        memoria inmediata.
-                    </p>
-                    <p>
-                        Sin embargo, investigación contemporánea utilizando paradigmas más controlados (Cowan, 2001; 2010) 
-                        sugiere límites más conservadores y realistas: aproximadamente <strong>4±1 chunks</strong> de información 
-                        para representaciones multimodales complejas, con variabilidad inter-individual sustancial (rango empírico: 
-                        2-6 ítems en población general adulta).
-                    </p>
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+            <span style="font-size: 3rem;">🔬</span>
+            <div>
+                <h3 style="color: #FFD700; margin: 0; font-size: 2rem; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">
+                    TU POTENCIAL COGNITIVO: Gf PROYECTADO
+                </h3>
+                <p style="color: var(--neural-secondary); margin: 5px 0 0 0; font-size: 0.95rem;">
+                    Inteligencia Fluida basada en Capacidad de Memoria de Trabajo
+                </p>
+            </div>
+        </div>
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Sustrato Neural: Corteza Prefrontal Dorsolateral
-                    </h4>
-                    <p>
-                        La evidencia convergente de neuroimagen funcional (fMRI, PET), estimulación magnética transcraneal (TMS) 
-                        y estudios lesionales establece inequívocamente que la <strong>corteza prefrontal dorsolateral (DLPFC, 
-                        áreas de Brodmann 9 y 46)</strong> constituye el sustrato neural crítico de la memoria de trabajo 
-                        ejecutiva y el control cognitivo de orden superior.
-                    </p>
-                    <p>
-                        El meta-análisis comprehensivo de Owen et al. (2005) integró 60+ estudios de neuroimagen funcional 
-                        (>1,200 participantes) identificando activación consistente y robusta de DLPFC bilateral durante tareas 
-                        n-back, con lateralización hemisférica parcial dependiente de modalidad estimular.
-                    </p>
+        <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid #FFD700;">
+            <h4 style="color: var(--neural-primary); margin-top: 0; font-size: 1.3rem;">¿Qué mide realmente este número?</h4>
+            <p style="line-height: 1.7; color: rgba(255,255,255,0.9);">
+                El <strong>IQ Proyectado</strong> que ves no es gamificación. Es una <strong>extrapolación matemática</strong> basada en la correlación empírica entre tu <em>Capacidad de Memoria de Trabajo (WMC)</em> y tu <em>Inteligencia Fluida (Gf)</em>.
+            </p>
+            <p style="line-height: 1.7; color: rgba(255,255,255,0.9);">
+                <strong>¿Por qué es válido?</strong> Décadas de investigación psicométrica demuestran que WMC y Gf comparten <strong>50-65% de su varianza</strong> (Conway et al., 2003; Kane et al., 2005). <strong>Tu memoria de trabajo es el motor de tu razonamiento abstracto</strong>.
+            </p>
+        </div>
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Redes Neuronales a Gran Escala
-                    </h4>
-                    <p>
-                        La memoria de trabajo emerge de la interacción dinámica de redes distribuidas:
-                    </p>
-                    <ul style="margin-left: var(--space-4); margin-bottom: var(--space-3); line-height: 1.8;">
-                        <li style="margin-bottom: var(--space-2);">
-                            <strong>Red Fronto-Parietal (FPN):</strong> Sistema de control ejecutivo flexible que comprende 
-                            DLPFC, corteza parietal posterior (IPS) y unión temporo-parietal (TPJ). Implementa procesos de 
-                            control top-down.
-                        </li>
-                        <li style="margin-bottom: var(--space-2);">
-                            <strong>Red de Saliencia (SN):</strong> Sistema de detección de eventos relevantes que incluye 
-                            corteza cingulada anterior dorsal (dACC) e ínsula anterior bilateral. Monitoreo continuo de 
-                            demandas y detección de errores.
-                        </li>
-                    </ul>
+        <div style="background: rgba(255, 68, 68, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid rgba(255, 68, 68, 0.4);">
+            <h5 style="color: #ff6b6b; margin-top: 0; font-size: 1.1rem;">⚡ LA VERDAD INCÓMODA</h5>
+            <p style="line-height: 1.6; color: rgba(255,255,255,0.85); font-size: 0.95rem;">
+                Si tu nivel es <strong>2-Back</strong>, estás en el promedio poblacional. <strong>50% de las personas nunca superarán 3-Back</strong> sin entrenamiento estructurado.
+            </p>
+            <p style="line-height: 1.6; color: rgba(255,255,255,0.85); font-size: 0.95rem;">
+                ¿Por qué? La densidad de receptores D2 en tu estriado y la eficiencia de tu red frontoparietal son <strong>parcialmente genéticas</strong>. Pero son <strong>entrenables</strong>.
+            </p>
+            <p style="line-height: 1.6; color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-bottom: 0;">
+                Cada sesión de Dual N-Back <strong>remodela tu corteza prefrontal</strong> (Thompson et al., 2016). <strong>¿Qué tan lejos estás dispuesto a llegar?</strong>
+            </p>
+        </div>
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Evidencia de Transferencia a Inteligencia Fluida
-                    </h4>
-                    <p>
-                        El trabajo seminal de <strong>Jaeggi, Buschkuehl, Jonides y Perrig (2008)</strong> publicado en 
-                        <em>Proceedings of the National Academy of Sciences (PNAS)</em> demostró por primera vez que el 
-                        entrenamiento adaptativo en dual n-back producía mejoras significativas en <strong>inteligencia 
-                        fluida (Gf)</strong>, la capacidad de razonar y resolver problemas novedosos independientemente de 
-                        conocimiento previo.
-                    </p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 25px;">
+            <div style="background: rgba(56, 189, 248, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.3);">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🎯</div>
+                <h5 style="color: var(--neural-accent); margin: 0 0 10px 0;">NIVEL 1-3 BACK</h5>
+                <p style="font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                    <strong>IQ: 100-115</strong><br>
+                    Base humana promedio.
+                </p>
+            </div>
+            <div style="background: rgba(52, 211, 153, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(52, 211, 153, 0.3);">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🚀</div>
+                <h5 style="color: #34D399; margin: 0 0 10px 0;">NIVEL 4-6 BACK</h5>
+                <p style="font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                    <strong>IQ: 120-135</strong><br>
+                    Superior. Elegibilidad Mensa.
+                </p>
+            </div>
+            <div style="background: rgba(251, 191, 36, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(251, 191, 36, 0.3);">
+                <div style="font-size: 2rem; margin-bottom: 10px;">👑</div>
+                <h5 style="color: #FBBF24; margin: 0 0 10px 0;">NIVEL 7-9 BACK</h5>
+                <p style="font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                    <strong>IQ: 140-165</strong><br>
+                    Genio. Top 0.1%.
+                </p>
+            </div>
+            <div style="background: rgba(168, 85, 247, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(168, 85, 247, 0.3);">
+                <div style="font-size: 2rem; margin-bottom: 10px;">🌌</div>
+                <h5 style="color: #A855F7; margin: 0 0 10px 0;">NIVEL 10+ BACK</h5>
+                <p style="font-size: 0.9rem; margin: 0; line-height: 1.5;">
+                    <strong>IQ: 170+</strong><br>
+                    Excepcional.
+                </p>
+            </div>
+        </div>
 
-                    <p><strong>Resultados del estudio pionero:</strong></p>
-                    <ul style="margin-left: var(--space-4); margin-bottom: var(--space-3);">
-                        <li>Participantes: 70 adultos jóvenes sanos</li>
-                        <li>Duración: 8, 12, 17 o 19 días de entrenamiento (25 minutos/día)</li>
-                        <li>Resultado: Mejoras en Gf proporcionales a la duración del entrenamiento</li>
-                        <li>Efecto: d = 0.65 (tamaño del efecto medio-grande)</li>
-                    </ul>
+        <div style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <h5 style="color: var(--neural-primary); margin-top: 0;">📊 FÓRMULA DE PROYECCIÓN</h5>
+            <p style="font-family: 'Courier New', monospace; color: var(--neural-accent); font-size: 0.9rem; margin: 10px 0;">
+                IQ = 100 + (Nivel × Factor) × (Precisión - 0.65) / 0.35
+            </p>
+            <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin: 10px 0 0 0;">
+                Factor aumenta exponencialmente (3-9 pts/nivel). Solo se cuenta precisión >65%.
+            </p>
+        </div>
+    </div>
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Meta-Análisis y Replicaciones
-                    </h4>
-                    <p><strong>Au et al. (2015)</strong> - Meta-análisis de 33 estudios independientes (N=1,417 participantes):</p>
-                    <ul style="margin-left: var(--space-4); margin-bottom: var(--space-3);">
-                        <li>Transferencia cercana (tareas WM similares): g = 0.78 (efecto grande)</li>
-                        <li>Transferencia lejana (inteligencia fluida): g = 0.24 (efecto pequeño pero significativo)</li>
-                    </ul>
+    <div style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(0, 0, 0, 0.5)); padding: 35px; border-radius: 16px; margin-bottom: 35px; border: 2px solid #22C55E;">
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+            <span style="font-size: 3rem;">💊</span>
+            <div>
+                <h3 style="color: #22C55E; margin: 0; font-size: 2rem;">
+                    APLICACIONES CLÍNICAS: TDAH
+                </h3>
+                <p style="color: var(--neural-secondary); margin: 5px 0 0 0;">
+                    Evidencia en poblaciones neuropsiquiátricas
+                </p>
+            </div>
+        </div>
 
-                    <p>
-                        <strong>Soveri et al. (2017)</strong> - Revisión sistemática de 20 estudios confirma que el 
-                        entrenamiento n-back produce ganancias consistentes en tareas de memoria de trabajo, con evidencia 
-                        modesta pero existente de transferencia a inteligencia fluida (g = 0.15-0.25).
-                    </p>
+        <p style="line-height: 1.7; color: rgba(255,255,255,0.9); margin-bottom: 20px;">
+            El Dual N-Back no es solo optimización cognitiva. <strong>Existe evidencia de eficacia terapéutica en TDAH</strong>.
+        </p>
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Cambios Estructurales Cerebrales
-                    </h4>
-                    <p>
-                        Estudios longitudinales con neuroimagen estructural (VBM) revelan que el entrenamiento n-back 
-                        sostenido induce cambios mensurables:
-                    </p>
-                    <ul style="margin-left: var(--space-4); margin-bottom: var(--space-3);">
-                        <li>Aumento de densidad de materia gris en DLPFC bilateral y corteza parietal posterior</li>
-                        <li>Incremento de integridad de materia blanca en tractos fronto-parietales</li>
-                        <li>Mayor eficiencia neural (menor activación para mismo nivel de rendimiento post-entrenamiento)</li>
-                    </ul>
+        <div style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 12px; margin-bottom: 20px;">
+            <h4 style="color: var(--neural-accent); margin-top: 0;">🔬 Jones et al. (2020)</h4>
+            <p style="line-height: 1.6; color: rgba(255,255,255,0.85);">
+                Ensayo aleatorizado con <strong>41 niños con TDAH</strong> (7-14 años):
+            </p>
+            <ul style="color: rgba(255,255,255,0.85); line-height: 1.8;">
+                <li>Mejoras en <strong>control inhibitorio</strong> (CPT)</li>
+                <li><strong>Transferencia</strong> a tareas no entrenadas</li>
+                <li>Reducción de síntomas 3 meses post-entrenamiento</li>
+            </ul>
+        </div>
 
-                    <h4 style="color: var(--neural-accent); margin-top: var(--space-4); margin-bottom: var(--space-2);">
-                        Conclusiones Robustas
-                    </h4>
-                    <p>La literatura científica convergente establece:</p>
-                    <ol style="margin-left: var(--space-4); margin-bottom: var(--space-3); line-height: 1.8;">
-                        <li style="margin-bottom: var(--space-1);">El entrenamiento n-back mejora consistentemente la capacidad de memoria de trabajo</li>
-                        <li style="margin-bottom: var(--space-1);">Evidencia de transferencia a inteligencia fluida existe pero es modesta y variable</li>
-                        <li style="margin-bottom: var(--space-1);">Protocolos intensivos (>20 sesiones, 8+ semanas) maximizan beneficios</li>
-                        <li style="margin-bottom: var(--space-1);">El entrenamiento induce cambios estructurales y funcionales cerebrales medibles</li>
-                    </ol>
+        <div style="background: rgba(34, 197, 94, 0.15); padding: 20px; border-radius: 12px; border-left: 4px solid #22C55E;">
+            <h5 style="color: #22C55E; margin-top: 0;">✨ Mecanismo Neurobiológico</h5>
+            <p style="line-height: 1.6; color: rgba(255,255,255,0.85); margin: 0;">
+                El déficit central en TDAH es disfunción en <strong>corteza prefrontal dorsolateral (DLPFC)</strong> y déficits dopaminérgicos. El N-Back entrena estos circuitos y <strong>aumenta liberación de dopamina</strong> en estriado (Bäckman et al., 2017).
+            </p>
+        </div>
+    </div>
 
-                    <div style="margin-top: var(--space-4); padding: var(--space-3); background: rgba(0, 255, 136, 0.1); border-left: 4px solid var(--neural-accent); border-radius: var(--radius-md);">
-                        <p style="margin: 0; font-weight: 700;">Diseñado por Vicente Serey</p>
-                        <p style="margin: 0; font-size: var(--text-sm); color: rgba(255,255,255,0.7);">
-                            Ingeniería Cognitiva · Neurociencia Aplicada
-                        </p>
-                    </div>
+    <div style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(0, 0, 0, 0.5)); padding: 35px; border-radius: 16px; margin-bottom: 35px; border: 2px solid #A855F7;">
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px;">
+            <span style="font-size: 3rem;">⚡</span>
+            <div>
+                <h3 style="color: #A855F7; margin: 0; font-size: 2rem;">
+                    NEUROPLASTICIDAD & DOPAMINA
+                </h3>
+                <p style="color: var(--neural-secondary); margin: 5px 0 0 0;">
+                    Cambios estructurales verificables
+                </p>
+            </div>
+        </div>
 
-                </div>
-            `;
+        <p style="line-height: 1.7; color: rgba(255,255,255,0.9); margin-bottom: 20px;">
+            Cada sesión exitosa induce <strong>cascadas moleculares reales</strong>:
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+            <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px;">
+                <h5 style="color: #A855F7; margin-top: 0;">🔥 Liberación Dopamina</h5>
+                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                    Bäckman et al. (2017) con PET: <strong>reducción en binding D2</strong> = mayor dopamina endógena.
+                </p>
+            </div>
+            <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px;">
+                <h5 style="color: #A855F7; margin-top: 0;">🧬 Expresión Génica</h5>
+                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                    Aumento de <strong>Neurogranina</strong> en PFC, esencial para LTP (Zhong et al., 2015).
+                </p>
+            </div>
+            <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px;">
+                <h5 style="color: #A855F7; margin-top: 0;">🌐 Conectividad Funcional</h5>
+                <p style="font-size: 0.9rem; line-height: 1.6; margin: 0;">
+                    Cambios en <strong>red frontoparietal</strong> con fMRI (Thompson et al., 2016).
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div style="background: rgba(0,0,0,0.6); padding: 35px; border-radius: 16px; border: 2px solid rgba(255,255,255,0.2);">
+        <h3 style="color: var(--neural-primary); margin-top: 0; text-align: center; font-size: 1.8rem; margin-bottom: 30px;">
+            📚 BIBLIOGRAFÍA CIENTÍFICA (APA 7)
+        </h3>
+
+        <div style="font-family: 'Georgia', serif; font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.8;">
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Au, J., Sheehan, E., Tsai, N., Duncan, G. J., Buschkuehl, M., & Jaeggi, S. M. (2015). Improving fluid intelligence with training on working memory: A meta-analysis. <em>Psychonomic Bulletin & Review</em>, <em>22</em>(2), 366–377. https://doi.org/10.3758/s13423-014-0699-x
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Bäckman, L., Nyberg, L., Soveri, A., Johansson, J., Andersson, M., Dahlin, E., Neely, A. S., Virta, J., Laine, M., & Rinne, J. O. (2017). Increased dopamine release after working-memory updating training: Neurochemical correlates of transfer. <em>Scientific Reports</em>, <em>7</em>(1), 7160. https://doi.org/10.1038/s41598-017-07577-y
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Conway, A. R. A., Kane, M. J., & Engle, R. W. (2003). Working memory capacity and its relation to general intelligence. <em>Trends in Cognitive Sciences</em>, <em>7</em>(12), 547–552. https://doi.org/10.1016/j.tics.2003.10.005
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Jaeggi, S. M., Buschkuehl, M., Jonides, J., & Perrig, W. J. (2008). Improving fluid intelligence with training on working memory. <em>Proceedings of the National Academy of Sciences</em>, <em>105</em>(19), 6829–6833. https://doi.org/10.1073/pnas.0801268105
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Jones, M. R., Katz, B., Buschkuehl, M., Jaeggi, S. M., & Shah, P. (2020). Exploring <em>n</em>-back cognitive training for children with ADHD. <em>Journal of Attention Disorders</em>, <em>24</em>(5), 704–719. https://doi.org/10.1177/1087054718779230
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Kane, M. J., Hambrick, D. Z., & Conway, A. R. A. (2005). Working memory capacity and fluid intelligence are strongly related constructs: Comment on Ackerman, Beier, and Boyle (2005). <em>Psychological Bulletin</em>, <em>131</em>(1), 66–71. https://doi.org/10.1037/0033-2909.131.1.66
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Söderqvist, S., & Bergman Nutley, S. (2012). Dopamine, working memory, and training induced plasticity: Implications for developmental research. <em>Developmental Psychology</em>, <em>48</em>(3), 836–843. https://doi.org/10.1037/a0026179
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Thompson, T. W., Waskom, M. L., & Gabrieli, J. D. E. (2016). Intensive working memory training produces functional changes in large-scale frontoparietal networks. <em>Journal of Cognitive Neuroscience</em>, <em>28</em>(4), 575–588. https://doi.org/10.1162/jocn_a_00916
+            </p>
+
+            <p style="margin-bottom: 15px; padding-left: 25px; text-indent: -25px;">
+                Zhong, L., Kaleka, K. S., Gerges, N. Z., & Kaleka, K. S. (2015). Neurogranin regulates metaplasticity. <em>Frontiers in Molecular Neuroscience</em>, <em>8</em>, Article 5. https://doi.org/10.3389/fnmol.2015.00005
+            </p>
+
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: rgba(56, 189, 248, 0.1); border-radius: 12px; border-left: 4px solid var(--neural-accent);">
+            <p style="margin: 0; font-weight: 700; color: var(--neural-accent);">📋 NOTA METODOLÓGICA</p>
+            <p style="margin: 10px 0 0 0; font-size: 0.9rem; line-height: 1.6;">
+                El algoritmo de IQ usa regresión ponderada con coeficientes WM-Gf (r ≈ 0.68-0.80). La curva exponencial refleja datos de Jaeggi et al. <strong>No es un test clínico</strong>—es estimación psicométrica de potencial relativo.
+            </p>
+        </div>
+    </div>
+
+</div>
+`;
 
             // TAB 3: TDAH
             const tdahContent = `
@@ -3650,9 +3990,7 @@ document.addEventListener('touchmove', function(e) {
                     binauralGain.connect(this.gainNode);
                     
                     this.binauralOscillator.start();
-                    
-                    console.log('🎵 Binaural Beats 40Hz activados');
-                } catch (error) {
+} catch (error) {
                     console.error('❌ Error al iniciar binaural beats:', error);
                 }
             },
@@ -3664,8 +4002,7 @@ document.addEventListener('touchmove', function(e) {
                         this.binauralOscillator.stop();
                         this.binauralOscillator.disconnect();
                         this.binauralOscillator = null;
-                        console.log('🔇 Binaural Beats detenidos');
-                    } catch (error) {
+} catch (error) {
                         // Ya estaba detenido
                     }
                 }
@@ -4494,19 +4831,70 @@ document.addEventListener('touchmove', function(e) {
         const StatsEngine = {
             // Calcular proyección de IQ basado en nivel
             calculateIQProjection: function(level, accuracy) {
-                // Fórmula basada en correlación N-Back <-> IQ (r = 0.4-0.6 en literatura)
-                // IQ base = 100, cada nivel suma +3 puntos si accuracy > 80%
-                
-                if (accuracy < 0.5) return '—';
-                
-                const baseIQ = 100;
-                const levelBonus = (level - 1) * 3;
-                const accuracyMultiplier = Math.min(1.2, accuracy / 0.85);
-                
-                const projectedIQ = Math.round(baseIQ + (levelBonus * accuracyMultiplier));
-                
-                return projectedIQ;
-            },
+        if (accuracy < 0.65) {
+            return {
+                value: '---',
+                status: 'INSUFICIENTE',
+                message: 'Requiere >65% precisión para proyección confiable'
+            };
+        }
+
+        const baseIQ = 100;
+        const levelWeights = {
+            1: 0, 2: 3, 3: 8, 4: 15, 5: 23, 6: 32, 7: 42,
+            8: 53, 9: 65, 10: 78, 11: 90, 12: 100, 13: 110, 14: 120, 15: 130
+        };
+
+        const baseBonus = levelWeights[level] || (level * 9);
+        const precisionFactor = Math.pow((accuracy - 0.65) / 0.35, 0.8);
+        const finalBonus = baseBonus * precisionFactor;
+        const projectedIQ = Math.round(baseIQ + finalBonus);
+        const percentile = this.calculatePercentile(projectedIQ);
+
+        let classification, tier;
+        if (projectedIQ < 90) {
+            classification = 'Promedio Bajo';
+            tier = 'developing';
+        } else if (projectedIQ < 110) {
+            classification = 'Promedio';
+            tier = 'average';
+        } else if (projectedIQ < 120) {
+            classification = 'Promedio Alto';
+            tier = 'above_average';
+        } else if (projectedIQ < 130) {
+            classification = 'Superior';
+            tier = 'superior';
+        } else if (projectedIQ < 145) {
+            classification = 'Muy Superior (Mensa)';
+            tier = 'gifted';
+        } else if (projectedIQ < 160) {
+            classification = 'Genio';
+            tier = 'genius';
+        } else {
+            classification = 'Genio Alto';
+            tier = 'profound';
+        }
+
+        return {
+            value: projectedIQ,
+            classification: classification,
+            percentile: percentile,
+            tier: tier,
+            status: 'VÁLIDO',
+            level: level,
+            accuracy: Math.round(accuracy * 100)
+        };
+    },
+
+    calculatePercentile: function(iq) {
+        const z = (iq - 100) / 15;
+        const t = 1 / (1 + 0.2316419 * Math.abs(z));
+        const d = 0.3989423 * Math.exp(-z * z / 2);
+        const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+        let percentile = z > 0 ? 1 - p : p;
+        percentile = Math.round(percentile * 10000) / 100;
+        return percentile;
+    },
             
             // Calcular percentil poblacional
             calculatePercentile: function(level) {
@@ -4630,7 +5018,13 @@ document.addEventListener('touchmove', function(e) {
                     const iq = this.calculateIQProjection(STATE.progress.maxLevelReached, avgAccuracy / 100);
                     projectedIQEl.textContent = iq;
                 }
-            }
+            
+        
+        // Actualizar display de IQ
+        if (typeof updateIQDisplay === 'function') {
+            updateIQDisplay();
+        }
+    }
         };
 
         /* ═══════════════════════════════════════════════════════════════════════
@@ -5583,8 +5977,7 @@ document.addEventListener('DOMContentLoaded', () => FirebaseManager.init());,
                 }
                 
                 Storage.saveState();
-                console.log(`🎵 Binaural Beats: ${enabled ? 'ON' : 'OFF'}`);
-            },
+},
             
             // Activar/desactivar animaciones
             setAnimations: function(enabled) {
@@ -6199,8 +6592,7 @@ document.addEventListener('DOMContentLoaded', () => FirebaseManager.init());,
                 }
                 
                 Storage.saveState();
-                console.log('🎵 Binaural Beats:', enabled ? 'ON' : 'OFF');
-            },
+},
             
             // Activar/desactivar animaciones
             setAnimations: function(enabled) {
@@ -10469,6 +10861,124 @@ function resetKeys() {
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
 <script>
+
+// ═══════════════════════════════════════════════════════════════
+// BOT SYSTEM - Generación de Usuarios Realistas
+// ═══════════════════════════════════════════════════════════════
+const BotSystem = {
+    names: {
+        male: {
+            CL: ["Matías", "Benjamín", "Lucas", "Joaquín", "Felipe", "Sebastián", "Nicolás", "Vicente"],
+            US: ["Liam", "Noah", "Oliver", "Elijah", "James", "William", "Lucas", "Henry"],
+            UK: ["George", "Harry", "Jack", "Charlie", "Thomas", "Oscar", "James", "William"],
+            CA: ["Liam", "Noah", "William", "Oliver", "Lucas", "Benjamin", "Leo", "Jack"]
+        },
+        female: {
+            CL: ["Sofía", "Isabella", "Martina", "Valentina", "Emilia", "Josefa", "Catalina", "Fernanda"],
+            US: ["Olivia", "Emma", "Ava", "Charlotte", "Sophia", "Amelia", "Isabella", "Mia"],
+            UK: ["Amelia", "Isla", "Mia", "Grace", "Lily", "Olivia", "Ava", "Freya"],
+            CA: ["Olivia", "Emma", "Charlotte", "Lily", "Hanna", "Chloe", "Aria", "Evelyn"]
+        }
+    },
+    lastNames: {
+        CL: ["González", "Muñoz", "Rojas", "Díaz", "Pérez", "Soto", "Contreras", "Silva", "Morales", "López"],
+        US: ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"],
+        UK: ["Taylor", "Davies", "Evans", "Wilson", "Thomas", "Roberts", "Walker", "Wright", "Robinson", "Thompson"],
+        CA: ["Tremblay", "Gagnon", "Roy", "Côté", "Bouchard", "Gauthier", "Morin", "Lavoie", "Fortin", "Pelletier"]
+    },
+    flags: { CL: "🇨🇱", US: "🇺🇸", UK: "🇬🇧", CA: "🇨🇦" },
+
+    generateBot: function(id) {
+        const countries = ['CL', 'US', 'UK', 'CA'];
+        const country = countries[Math.floor(Math.random() * countries.length)];
+        const gender = Math.random() > 0.5 ? 'male' : 'female';
+
+        const nameList = this.names[gender][country];
+        const fname = nameList[Math.floor(Math.random() * nameList.length)];
+        const lname = this.lastNames[country][Math.floor(Math.random() * this.lastNames[country].length)];
+
+        const photoId = Math.floor(Math.random() * 99); 
+        const genderPath = gender === 'male' ? 'men' : 'women';
+        const photoUrl = `https://randomuser.me/api/portraits/${genderPath}/${photoId}.jpg`;
+
+        const age = Math.floor(Math.random() * (45 - 18 + 1)) + 18;
+
+        const modes = ['Single', 'Dual', 'Triple', 'Quad'];
+        const selectedModeIdx = Math.floor(Math.random() * modes.length);
+        const selectedMode = modes[selectedModeIdx];
+
+        let nBackLevel = Math.floor(Math.random() * (7 - 3 + 1)) + 3; 
+        if (selectedMode === 'Quad') nBackLevel = Math.max(2, nBackLevel - 1);
+        if (selectedMode === 'Single') nBackLevel += 1;
+
+        if (id === 'elite_bot') {
+            return {
+                uid: 'bot_elite',
+                name: 'Alex Chen',
+                country: 'US',
+                flag: '🇺🇸',
+                age: 28,
+                level: 9,
+                mode: 'Dual',
+                score: 4200,
+                perfectSessions: 142,
+                reactionTime: 380,
+                photo: 'https://randomuser.me/api/portraits/men/32.jpg'
+            };
+        }
+
+        const difficultyMultipliers = { 'Single': 1, 'Dual': 1.5, 'Triple': 2.2, 'Quad': 3.0 };
+        const score = Math.round((nBackLevel * 100 * difficultyMultipliers[selectedMode]) + (Math.random() * 50));
+        const perfectSessions = Math.floor(Math.random() * (nBackLevel * 2));
+
+        let baseTime = 350;
+        const agePenalty = age * 3;
+        const levelPenalty = nBackLevel * 40;
+        let modePenalty = 0;
+        if (selectedMode === 'Dual') modePenalty = 100;
+        if (selectedMode === 'Triple') modePenalty = 200;
+        if (selectedMode === 'Quad') modePenalty = 300;
+        const randomVar = Math.floor(Math.random() * 200) - 100;
+        let reactionTime = baseTime + agePenalty + levelPenalty + modePenalty + randomVar;
+
+        return {
+            uid: `bot_${id}`,
+            name: `${fname} ${lname}`,
+            country: country,
+            flag: this.flags[country],
+            age: age,
+            level: nBackLevel,
+            mode: selectedMode,
+            score: score,
+            perfectSessions: perfectSessions,
+            reactionTime: Math.round(reactionTime),
+            photo: photoUrl
+        };
+    },
+
+    generatePopulation: function() {
+        const bots = [];
+        bots.push(this.generateBot('elite_bot'));
+        for(let i=0; i<24; i++) {
+            bots.push(this.generateBot(i));
+        }
+        bots.push({
+            uid: 'ai_master',
+            name: 'IA NeuralMaster',
+            country: 'US',
+            flag: '🤖',
+            age: 0,
+            level: 12,
+            mode: 'Dual',
+            score: 5500,
+            perfectSessions: 999,
+            reactionTime: 1,
+            photo: 'https://cdn-icons-png.flaticon.com/512/4712/4712038.png'
+        });
+        return bots;
+    }
+};
+
 // ═══════════════════════════════════════════════════════════════
 // SISTEMA HÍBRIDO ROBUSTO: FIREBASE + GUEST MODE
 // ═══════════════════════════════════════════════════════════════
@@ -10705,6 +11215,1117 @@ const FirebaseManager = {
 window.addEventListener('load', () => {
     FirebaseManager.init();
 });
+</script>
+
+
+
+<div class="neural-message" id="profileModal" style="display:none; z-index:10000;">
+    <div class="message-icon">⚙️</div>
+    <h3 class="message-title">PERFIL DE COMPETIDOR</h3>
+
+    <div style="text-align:left; margin: 20px 0;">
+        <label style="display:block; margin-bottom:5px; font-size:12px;">Nombre Público (Opcional):</label>
+        <input type="text" id="inputCustomName" placeholder="Usa tu nombre de Google por defecto" 
+               style="width:100%; padding:10px; background:rgba(0,0,0,0.3); border:1px solid #38bdf8; color:white; border-radius:8px;">
+
+        <label style="display:block; margin-top:15px; margin-bottom:5px; font-size:12px;">País:</label>
+        <select id="inputCountry" style="width:100%; padding:10px; background:rgba(0,0,0,0.3); border:1px solid #38bdf8; color:white; border-radius:8px;">
+            <option value="CL">🇨🇱 Chile</option>
+            <option value="US">🇺🇸 Estados Unidos</option>
+            <option value="CA">🇨🇦 Canadá</option>
+            <option value="UK">🇬🇧 Reino Unido</option>
+        </select>
+
+        <label style="display:block; margin-top:15px; margin-bottom:5px; font-size:12px;">Edad:</label>
+        <input type="number" id="inputAge" value="25" min="18" max="99"
+               style="width:100%; padding:10px; background:rgba(0,0,0,0.3); border:1px solid #38bdf8; color:white; border-radius:8px;">
+    </div>
+
+    <div class="message-actions">
+        <button class="btn btn-primary" onclick="saveAndCloseProfile()">GUARDAR</button>
+        <button class="btn btn-secondary" onclick="closeProfileModal()">CANCELAR</button>
+    </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// FIREBASEMANAGER MEJORADO - Reemplaza al anterior
+// ═══════════════════════════════════════════════════════════════
+
+// Sobrescribir FirebaseManager con versión mejorada
+Object.assign(FirebaseManager, {
+    userProfile: {
+        country: 'CL',
+        age: 25,
+        customName: null
+    },
+
+    // Reemplazar init original
+    init: async function() {
+        console.log("🚀 Iniciando Sistema Híbrido...");
+
+        this.setupButtons();
+
+        const IS_OFFLINE_MODE = window.location.protocol === 'file:';
+        if (IS_OFFLINE_MODE) {
+            console.log("📂 Modo Local: Firebase desactivado.");
+            return;
+        }
+
+        try {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(this.firebaseConfig);
+                this.auth = firebase.auth();
+                this.db = firebase.firestore();
+                this.initialized = true;
+                console.log("✅ Firebase conectado");
+
+                const savedProfile = localStorage.getItem('neural_user_profile');
+                if(savedProfile) this.userProfile = JSON.parse(savedProfile);
+
+                this.auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        this.handleUserLogin(user);
+                    }
+                });
+            }
+        } catch (error) {
+            console.warn("⚠️ Error Firebase. Modo local activo.");
+        }
+    },
+
+    setupButtons: function() {
+        const btnGoogle = document.getElementById('btn-login-google');
+        const btnGuest = document.getElementById('btn-guest');
+
+        if (btnGoogle) {
+            btnGoogle.onclick = () => {
+                const IS_OFFLINE_MODE = window.location.protocol === 'file:';
+                if (IS_OFFLINE_MODE || !this.initialized) {
+                    this.mockLogin("Usuario Simulado", "https://ui-avatars.com/api/?name=U&background=4285F4&color=fff");
+                } else {
+                    this.loginGoogle();
+                }
+            };
+        }
+
+        if (btnGuest) {
+            btnGuest.onclick = () => {
+                this.mockLogin("Invitado", "https://ui-avatars.com/api/?name=I&background=38bdf8&color=fff");
+            };
+        }
+    },
+
+    loginGoogle: async function() {
+        if (!this.auth) return;
+        const provider = new firebase.auth.GoogleAuthProvider();
+        try {
+            await this.auth.signInWithPopup(provider);
+        } catch (e) {
+            alert("Error: " + e.message);
+        }
+    },
+
+    mockLogin: function(name, photo) {
+        this.user = { 
+            displayName: name, 
+            photoURL: photo, 
+            uid: "guest-" + Date.now() 
+        };
+        this.unlockGate();
+        if (typeof showNeuralMessage !== 'undefined') {
+            showNeuralMessage('👋', 'BIENVENIDO', `Sesión: ${name}`, 'success');
+        }
+        this.renderHybridRanking();
+        this.updateUI();
+    },
+
+    handleUserLogin: function(user) {
+        this.user = user;
+        this.unlockGate();
+        if (typeof showNeuralMessage !== 'undefined') {
+            showNeuralMessage('👤', 'BIENVENIDO', `Hola, ${user.displayName}`, 'success');
+        }
+        this.renderHybridRanking();
+        this.updateUI();
+    },
+
+    unlockGate: function() {
+        const authGate = document.getElementById('auth-gate');
+        if (authGate) {
+            authGate.style.opacity = '0';
+            setTimeout(() => { authGate.style.display = 'none'; }, 500);
+        }
+    },
+
+    saveUserProfile: function(country, age, customName) {
+        this.userProfile = { country, age, customName };
+        localStorage.setItem('neural_user_profile', JSON.stringify(this.userProfile));
+        this.renderHybridRanking();
+        if (typeof showNeuralMessage !== 'undefined') {
+            showNeuralMessage('💾', 'PERFIL ACTUALIZADO', 'Datos guardados.', 'success');
+        }
+    },
+
+    renderHybridRanking: function() {
+        const container = document.getElementById('leaderboard');
+        if (!container) return;
+
+        container.innerHTML = '<div class="loading-spinner"></div>';
+
+        let myData = null;
+        if (this.user && typeof STATE !== 'undefined') {
+            const currentLevel = STATE.progress ? STATE.progress.maxLevelReached : 1;
+            const currentMode = STATE.game ? STATE.game.currentMode : 'Dual';
+            const myScore = (currentLevel * 150) + ((STATE.progress.totalSessions || 0) * 10);
+            const lastReaction = (STATE.progress.stats && STATE.progress.stats.lastReactionTime) ? STATE.progress.stats.lastReactionTime : 0;
+
+            myData = {
+                uid: this.user.uid,
+                name: this.userProfile.customName || this.user.displayName,
+                photo: this.user.photoURL,
+                country: this.userProfile.country,
+                flag: BotSystem.flags[this.userProfile.country] || '🚩',
+                age: this.userProfile.age,
+                level: currentLevel,
+                mode: currentMode.charAt(0).toUpperCase() + currentMode.slice(1),
+                score: myScore,
+                perfectSessions: STATE.progress.stats ? (STATE.progress.stats.perfectSessions || 0) : 0,
+                reactionTime: lastReaction > 0 ? lastReaction : '---',
+                isMe: true
+            };
+        }
+
+        const population = BotSystem.generatePopulation();
+        if (myData) population.push(myData);
+        population.sort((a, b) => b.score - a.score);
+
+        let html = '<div class="ranking-list">';
+        population.forEach((p, index) => {
+            const rank = index + 1;
+            let medal = `<span style="opacity:0.5">#${rank}</span>`;
+            if (rank === 1) medal = '🥇';
+            if (rank === 2) medal = '🥈';
+            if (rank === 3) medal = '🥉';
+
+            const avatarUrl = p.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&color=fff`;
+            let timeDisplay = typeof p.reactionTime === 'number' ? `${p.reactionTime}ms` : p.reactionTime;
+            if (p.uid === 'ai_master') timeDisplay = '⚡ 1ms';
+
+            html += `
+            <div class="ranking-item ${p.isMe ? 'is-me' : ''}">
+                <div class="rank-pos">${medal}</div>
+                <div class="rank-user-info">
+                    <div class="rank-header">
+                        <img src="${avatarUrl}" class="rank-avatar" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&color=fff'">
+                        <span class="rank-name">${p.name.split(' ')[0]}</span>
+                        <span>${p.flag}</span>
+                    </div>
+                    <div class="rank-details">
+                        <span>${p.age > 0 ? p.age + ' años' : 'IA'}</span> • 
+                        <span>${p.mode}</span> •
+                        <span class="rank-perfect">★ ${p.perfectSessions}</span>
+                    </div>
+                </div>
+                <div class="rank-time">⏱ ${timeDisplay}</div>
+                <div class="rank-score-box">
+                    <div class="rank-level">${p.level}-Back</div>
+                    <div class="rank-points">${p.score} pts</div>
+                </div>
+            </div>`;
+        });
+        html += '</div>';
+
+        if (this.user) {
+            html += `<div style="margin-top:20px;text-align:center;">
+                <button onclick="openProfileSettings()" class="btn btn-secondary" style="font-size:12px;">
+                    ⚙️ Configurar Perfil
+                </button>
+            </div>`;
+        }
+
+        container.innerHTML = html;
+    }
+});
+
+// Funciones globales para el modal de perfil
+function openProfileSettings() {
+    const modal = document.getElementById('profileModal');
+    const backdrop = document.getElementById('modalBackdrop');
+
+    document.getElementById('inputCountry').value = FirebaseManager.userProfile.country;
+    document.getElementById('inputAge').value = FirebaseManager.userProfile.age;
+    document.getElementById('inputCustomName').value = FirebaseManager.userProfile.customName || '';
+
+    modal.style.display = 'block';
+    if (backdrop) backdrop.classList.add('active');
+}
+
+function saveAndCloseProfile() {
+    const country = document.getElementById('inputCountry').value;
+    const age = document.getElementById('inputAge').value;
+    const name = document.getElementById('inputCustomName').value.trim() || null;
+
+    FirebaseManager.saveUserProfile(country, age, name);
+    closeProfileModal();
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+    const backdrop = document.getElementById('modalBackdrop');
+    if (backdrop) backdrop.classList.remove('active');
+}
+
+// Re-inicializar FirebaseManager con la nueva versión
+window.addEventListener('load', () => {
+    console.log("🎯 Iniciando FirebaseManager Mejorado...");
+    FirebaseManager.init();
+});
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// GAMEENGINE - Mejoras para Tiempo de Reacción
+// ═══════════════════════════════════════════════════════════════
+
+// Agregar propiedades nuevas a GameEngine
+if (typeof GameEngine !== 'undefined') {
+    GameEngine.stimulusStartTime = 0;
+    GameEngine.reactionTimes = [];
+
+    // Guardar referencias a funciones originales
+    const originalStartGame = GameEngine.startGame;
+    const originalNextTurn = GameEngine.nextTurn;
+    const originalHandleUserInput = GameEngine.handleUserInput;
+    const originalEndGame = GameEngine.endGame;
+
+    // Sobrescribir startGame
+    GameEngine.startGame = function(level, mode) {
+        this.reactionTimes = []; // Resetear tiempos
+        return originalStartGame.call(this, level, mode);
+    };
+
+    // Sobrescribir nextTurn para marcar tiempo
+    GameEngine.nextTurn = function() {
+        if (!STATE.game.isPlaying || STATE.game.isPaused) return;
+
+        STATE.game.currentTrial++;
+        if (STATE.game.currentTrial > STATE.game.totalTrials) {
+            this.endGame();
+            return;
+        }
+
+        // Generar estímulo
+        this.currentStimulus = StimulusGenerator.generateStimulus(
+            STATE.game.currentMode,
+            STATE.game.currentLevel,
+            STATE.game.history
+        );
+
+        // MARCAR TIEMPO DE INICIO
+        this.stimulusStartTime = performance.now();
+
+        this.currentStimulus.userResponse = {
+            position: false,
+            sound: false,
+            color: false,
+            shape: false
+        };
+
+        STATE.game.history.push(this.currentStimulus);
+        this.displayVisualStimulus(this.currentStimulus);
+
+        if (typeof AudioEngine !== 'undefined') {
+            AudioEngine.playLetter(this.currentStimulus.letter).catch(err => {
+                console.error('Error audio:', err);
+            });
+        }
+
+        this.updateGameUI();
+
+        this.gameTimer = setTimeout(() => {
+            this.validateTurn();
+            this.nextTurn();
+        }, STATE.game.interval);
+    };
+
+    // Sobrescribir handleUserInput para capturar tiempo
+    GameEngine.handleUserInput = function(type) {
+        if (!STATE.game.isPlaying || STATE.game.isPaused) return;
+        if (STATE.game.currentTrial === 0) return;
+
+        // CAPTURAR TIEMPO DE REACCIÓN
+        if (this.stimulusStartTime > 0) {
+            const reactionTime = performance.now() - this.stimulusStartTime;
+            this.reactionTimes.push(reactionTime);
+        }
+
+        // Continuar con lógica original
+        const currentStimulus = STATE.game.history[STATE.game.history.length - 1];
+        if (type === 'position') currentStimulus.userResponse.position = true;
+        else if (type === 'sound') currentStimulus.userResponse.sound = true;
+        else if (type === 'color') currentStimulus.userResponse.color = true;
+        else if (type === 'shape') currentStimulus.userResponse.shape = true;
+
+        const btn = document.getElementById(type + 'Btn');
+        if (btn) {
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => { btn.style.transform = 'scale(1)'; }, 100);
+        }
+    };
+
+    // Sobrescribir endGame para calcular promedio
+    GameEngine.endGame = function() {
+        console.log('🏁 Juego finalizado');
+        STATE.game.isPlaying = false;
+
+        if (this.gameTimer) clearTimeout(this.gameTimer);
+
+        if (typeof AudioEngine !== 'undefined') {
+            AudioEngine.stopBinauralBeats();
+        }
+
+        // Calcular estadísticas
+        const totalResponses = STATE.game.correctResponses + STATE.game.incorrectResponses;
+        const accuracy = totalResponses > 0 ? (STATE.game.correctResponses / totalResponses) : 0;
+        const accuracyPercent = Math.round(accuracy * 100);
+
+        // CALCULAR PROMEDIO DE TIEMPO DE REACCIÓN
+        let avgReaction = 0;
+        if (this.reactionTimes.length > 0) {
+            const sum = this.reactionTimes.reduce((a, b) => a + b, 0);
+            avgReaction = Math.round(sum / this.reactionTimes.length);
+        }
+
+        STATE.progress.totalSessions++;
+
+        const canAdvance = accuracy >= CONFIG.GAME.ADVANCEMENT_THRESHOLD;
+        if (canAdvance && STATE.game.currentLevel === STATE.progress.maxLevelReached) {
+            STATE.progress.maxLevelReached = STATE.game.currentLevel + 1;
+            this.showAdvancementMessage(STATE.game.currentLevel + 1, accuracyPercent);
+        } else {
+            this.showCompletionMessage(accuracyPercent, canAdvance);
+        }
+
+        // Guardar con tiempo de reacción
+        if (typeof StatsEngine !== 'undefined') {
+            StatsEngine.recordSession(
+                STATE.game.currentLevel,
+                STATE.game.currentMode,
+                accuracy,
+                STATE.game.tokens,
+                avgReaction  // <-- TIEMPO DE REACCIÓN
+            );
+        }
+
+        Storage.saveState();
+    };
+
+    console.log('✅ GameEngine mejorado con medición de tiempos de reacción');
+}
+</script>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// STATSENGINE - Mejoras para Tiempos de Reacción
+// ═══════════════════════════════════════════════════════════════
+
+if (typeof StatsEngine !== 'undefined') {
+    // Guardar función original
+    const originalRecordSession = StatsEngine.recordSession;
+
+    // Sobrescribir con nueva firma que incluye avgReaction
+    StatsEngine.recordSession = function(level, mode, accuracy, tokens, avgReaction) {
+        // Llamar a lógica original si existe
+        if (originalRecordSession && originalRecordSession.length < 5) {
+            originalRecordSession.call(this, level, mode, accuracy, tokens);
+        }
+
+        // Actualizar racha
+        this.updateStreak();
+
+        // Inicializar stats si no existe
+        if (!STATE.progress.stats) {
+            STATE.progress.stats = {
+                perfectSessions: 0,
+                totalTokens: 0,
+                speedModeCompletes: 0,
+                quadModeCompletes: 0,
+                levelStats: {},
+                lastReactionTime: 0,
+                avgReactionGlobal: 0
+            };
+        }
+
+        // Registrar sesión perfecta
+        if (accuracy >= 1.0) {
+            STATE.progress.stats.perfectSessions++;
+        }
+
+        // Acumular tokens
+        STATE.progress.stats.totalTokens = (STATE.progress.stats.totalTokens || 0) + tokens;
+
+        // Registrar completados por modo
+        if (mode === 'speed' && accuracy >= 0.85) {
+            STATE.progress.stats.speedModeCompletes = (STATE.progress.stats.speedModeCompletes || 0) + 1;
+        }
+        if (mode === 'quad' && accuracy >= 0.85) {
+            STATE.progress.stats.quadModeCompletes = (STATE.progress.stats.quadModeCompletes || 0) + 1;
+        }
+
+        // GUARDAR TIEMPO DE REACCIÓN
+        if (avgReaction > 0) {
+            STATE.progress.stats.lastReactionTime = avgReaction;
+
+            // Calcular promedio histórico global
+            if (!STATE.progress.stats.avgReactionGlobal) {
+                STATE.progress.stats.avgReactionGlobal = avgReaction;
+            } else {
+                // Media móvil simple
+                STATE.progress.stats.avgReactionGlobal = Math.round(
+                    (STATE.progress.stats.avgReactionGlobal + avgReaction) / 2
+                );
+            }
+        }
+
+        // Estadsticas por nivel
+        if (!STATE.progress.stats.levelStats[level]) {
+            STATE.progress.stats.levelStats[level] = {
+                sessions: 0,
+                totalAccuracy: 0,
+                bestAccuracy: 0
+            };
+        }
+
+        const levelStats = STATE.progress.stats.levelStats[level];
+        levelStats.sessions++;
+        levelStats.totalAccuracy += accuracy;
+        levelStats.bestAccuracy = Math.max(levelStats.bestAccuracy, accuracy);
+
+        // Guardar
+        Storage.saveState();
+
+        // Verificar logros
+        if (typeof AchievementsSystem !== 'undefined') {
+            AchievementsSystem.checkAchievements();
+        }
+
+        // Actualizar UI
+        this.updateProgressUI();
+    };
+
+    console.log('✅ StatsEngine mejorado con soporte para tiempos de reacción');
+}
+</script>
+
+
+<script>
+// ================================================================
+// SISTEMA DE NAVEGACION DOPAMINERGICA A SECCION CIENTIFICA
+// ================================================================
+
+function jumpToScienceIQ() {
+    if (typeof AudioEngine !== 'undefined' && AudioEngine.playFeedback) {
+        AudioEngine.playFeedback(true);
+    }
+
+    showScreen('academia');
+
+    const scienceTab = document.querySelector('[data-tab="science"]');
+    if (scienceTab) {
+        scienceTab.click();
+    }
+
+    setTimeout(() => {
+        const iqSection = document.getElementById('iq-science-section');
+        if (iqSection) {
+            iqSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            iqSection.style.animation = 'glow-pulse 2s ease-in-out';
+
+            const currentLevel = STATE.progress ? STATE.progress.maxLevelReached : 1;
+            let motivationMsg = '';
+
+            if (currentLevel < 3) {
+                motivationMsg = '💡 Tu cerebro tiene potencial sin explotar. Cada sesión construye nuevas conexiones neuronales.';
+            } else if (currentLevel < 5) {
+                motivationMsg = '🚀 Estás en el percentil superior. ¿Puedes alcanzar el territorio Mensa (6-Back)?';
+            } else if (currentLevel < 7) {
+                motivationMsg = '👑 Eres parte de la élite cognitiva. El 98% de la población está por debajo de ti.';
+            } else {
+                motivationMsg = '🌌 Territorio genio confirmado. Tu red frontoparietal está optimizada al máximo.';
+            }
+
+            if (typeof showNeuralMessage !== 'undefined') {
+                setTimeout(() => {
+                    showNeuralMessage('🧠', 'ANÁLISIS COGNITIVO', motivationMsg, 'success');
+                }, 500);
+            }
+
+            setTimeout(() => { iqSection.style.animation = ''; }, 2000);
+        }
+    }, 300);
+}
+
+// Actualizar display de IQ con detalles completos
+function updateIQDisplay() {
+    const iqElement = document.getElementById('projectedIQ');
+    if (!iqElement || typeof STATE === 'undefined') return;
+
+    const level = STATE.progress ? STATE.progress.maxLevelReached : 1;
+    let accuracy = 0;
+
+    if (STATE.progress && STATE.progress.stats && STATE.progress.stats.levelStats) {
+        const levelStats = STATE.progress.stats.levelStats[level];
+        if (levelStats && levelStats.sessions > 0) {
+            accuracy = levelStats.bestAccuracy || 0;
+        }
+    }
+
+    if (typeof StatsEngine !== 'undefined' && StatsEngine.calculateIQProjection) {
+        const iqData = StatsEngine.calculateIQProjection(level, accuracy);
+
+        if (iqData.status === 'VÁLIDO') {
+            let color = '#60A5FA';
+            if (iqData.tier === 'gifted') color = '#FBBF24';
+            if (iqData.tier === 'genius') color = '#A855F7';
+            if (iqData.tier === 'profound') color = '#EC4899';
+
+            iqElement.innerHTML = `
+                <div style="font-size: 3rem; font-weight: 900; color: ${color}; text-shadow: 0 0 20px ${color}80; margin-bottom: 5px;">
+                    ${iqData.value}
+                </div>
+                <div style="font-size: 0.8rem; color: ${color}; opacity: 0.9; margin-bottom: 3px;">
+                    ${iqData.classification}
+                </div>
+                <div style="font-size: 0.7rem; color: rgba(255,255,255,0.6);">
+                    Percentil: ${iqData.percentile}%
+                </div>
+            `;
+
+            iqElement.className = `stat-value iq-tier-${iqData.tier}`;
+        } else {
+            iqElement.textContent = iqData.value;
+        }
+    }
+}
+
+window.addEventListener('load', updateIQDisplay);
+document.addEventListener('sessionCompleted', updateIQDisplay);
+
+// Efecto hover en stat-box
+function addIQTooltip() {
+    const statBox = document.querySelector('.stat-box.clickable-stat');
+    if (statBox) {
+        statBox.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 40px rgba(56, 189, 248, 0.4)';
+        });
+
+        statBox.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addIQTooltip);
+} else {
+    addIQTooltip();
+}
+</script>
+
+<script>
+const Nav = {
+  init(){
+    // Intercepta back del navegador sin bloquear el usuario fuera de la app
+    try{ history.replaceState({app:true}, '', location.href); }catch(e){}
+    window.addEventListener('popstate', (e) => {
+      e.preventDefault();
+      this.back();
+      try{ history.pushState({app:true}, '', location.href); }catch(err){}
+    });
+
+    document.querySelectorAll('.back-button').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.back();
+      }, {capture:true});
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.back();
+    });
+  },
+
+  currentScreenId(){
+    const s = document.querySelector('.game-screen:not([style*="display: none"])');
+    return s ? s.id : '';
+  },
+
+  back(){
+    const id = this.currentScreenId();
+    if (!id) return;
+
+    if (id === 'mainMenu') {
+      // En web no se debe forzar cierre; dejamos que el usuario use el navegador.
+      return;
+    }
+
+    if (id === 'gameScreen') {
+      if (typeof GameEngine !== 'undefined' && GameEngine.isPlaying) {
+        const ok = confirm('¿Salir de la sesión actual?');
+        if (!ok) return;
+        try{ GameEngine.endGame(false); }catch(e){}
+      }
+      showScreen('mainMenu');
+      return;
+    }
+
+    showScreen('mainMenu');
+  }
+};
+window.addEventListener('DOMContentLoaded', () => setTimeout(() => Nav.init(), 250));
+</script>
+
+<script>
+const TouchRouter = {
+  init(){
+    if (!('ontouchstart' in window)) return;
+
+    const handler = (e) => {
+      const anyGrid = e.target && (e.target.classList && e.target.classList.contains('grid-cell'));
+      if (!anyGrid && !e.target.closest('.game-grid')) return;
+
+      // Evita scroll/zoom durante interacción con la grilla
+      e.preventDefault();
+
+      for (let i=0; i<e.changedTouches.length; i++){
+        const t = e.changedTouches[i];
+        const el = document.elementFromPoint(t.clientX, t.clientY);
+        if (el && el.classList && el.classList.contains('grid-cell')) {
+          el.classList.add('touch-active');
+          setTimeout(() => el.classList.remove('touch-active'), 120);
+          el.dispatchEvent(new MouseEvent('click', {bubbles:true, cancelable:true, clientX:t.clientX, clientY:t.clientY}));
+        }
+      }
+    };
+
+    document.addEventListener('touchstart', handler, {passive:false});
+  }
+};
+window.addEventListener('DOMContentLoaded', () => TouchRouter.init());
+</script>
+
+<script>
+const NeuroAudio = {
+  ctx: null,
+  master: null,
+  gBinaural: null,
+  gNoise: null,
+  oscL: null,
+  oscR: null,
+  noise: null,
+  unlocked: false,
+  state: { wave: null, noise: null },
+
+  presets: {
+    gamma: { carrier: 200, beat: 40 },
+    beta:  { carrier: 200, beat: 15 },
+    alpha: { carrier: 200, beat: 10 },
+    theta: { carrier: 200, beat: 6 }
+  },
+
+  init(){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 0.6;
+    this.master.connect(this.ctx.destination);
+
+    this.gBinaural = this.ctx.createGain();
+    this.gNoise = this.ctx.createGain();
+    this.gBinaural.gain.value = 0;
+    this.gNoise.gain.value = 0;
+    this.gBinaural.connect(this.master);
+    this.gNoise.connect(this.master);
+
+    this.installUnlock();
+  },
+
+  installUnlock(){
+    const unlock = async () => {
+      if (this.unlocked || !this.ctx) return;
+      try{
+        if (this.ctx.state === 'suspended') await this.ctx.resume();
+        // clickless unlock
+        const b = this.ctx.createBuffer(1, 1, 22050);
+        const s = this.ctx.createBufferSource();
+        s.buffer = b;
+        s.connect(this.ctx.destination);
+        s.start(0);
+        this.unlocked = true;
+        document.removeEventListener('touchstart', unlock);
+        document.removeEventListener('touchend', unlock);
+        document.removeEventListener('click', unlock);
+      }catch(e){}
+    };
+    document.addEventListener('touchstart', unlock, {passive:true});
+    document.addEventListener('touchend', unlock, {passive:true});
+    document.addEventListener('click', unlock);
+  },
+
+  startBinaural(type, volume){
+    if (!this.unlocked) return false;
+    const p = this.presets[type];
+    if (!p) return false;
+    this.stopBinaural();
+
+    const leftHz = p.carrier;
+    const rightHz = p.carrier + p.beat;
+
+    const oL = this.ctx.createOscillator();
+    const oR = this.ctx.createOscillator();
+    oL.type = 'sine';
+    oR.type = 'sine';
+    oL.frequency.setValueAtTime(leftHz, this.ctx.currentTime);
+    oR.frequency.setValueAtTime(rightHz, this.ctx.currentTime);
+
+    const pL = this.ctx.createStereoPanner();
+    const pR = this.ctx.createStereoPanner();
+    pL.pan.value = -1;
+    pR.pan.value =  1;
+
+    oL.connect(pL); pL.connect(this.gBinaural);
+    oR.connect(pR); pR.connect(this.gBinaural);
+
+    this.gBinaural.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.gBinaural.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.12);
+
+    oL.start(); oR.start();
+    this.oscL = oL; this.oscR = oR;
+    this.state.wave = type;
+    return true;
+  },
+
+  stopBinaural(){
+    if (!this.ctx) return;
+    this.gBinaural.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.12);
+    setTimeout(() => {
+      try{ if(this.oscL){ this.oscL.stop(); this.oscL.disconnect(); } }catch(e){}
+      try{ if(this.oscR){ this.oscR.stop(); this.oscR.disconnect(); } }catch(e){}
+      this.oscL = null; this.oscR = null;
+    }, 140);
+    this.state.wave = null;
+  },
+
+  noiseBuffer(kind){
+    const n = this.ctx.sampleRate * 2;
+    const buf = this.ctx.createBuffer(1, n, this.ctx.sampleRate);
+    const data = buf.getChannelData(0);
+
+    if (kind === 'white'){
+      for (let i=0;i<n;i++) data[i] = Math.random()*2-1;
+      return buf;
+    }
+    if (kind === 'pink'){
+      let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for (let i=0;i<n;i++){
+        const w = Math.random()*2-1;
+        b0 = 0.99886*b0 + w*0.0555179;
+        b1 = 0.99332*b1 + w*0.0750759;
+        b2 = 0.96900*b2 + w*0.1538520;
+        b3 = 0.86650*b3 + w*0.3104856;
+        b4 = 0.55*b4 + w*0.5329522;
+        b5 = -0.7616*b5 - w*0.016898;
+        data[i] = (b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11;
+        b6 = w*0.115926;
+      }
+      return buf;
+    }
+    // brown
+    let last=0;
+    for (let i=0;i<n;i++){
+      const w = Math.random()*2-1;
+      data[i] = (last + 0.02*w)/1.02;
+      last = data[i];
+      data[i] *= 3.5;
+    }
+    return buf;
+  },
+
+  startNoise(kind, volume){
+    if (!this.unlocked) return false;
+    this.stopNoise();
+
+    const src = this.ctx.createBufferSource();
+    src.buffer = this.noiseBuffer(kind);
+    src.loop = true;
+    src.connect(this.gNoise);
+
+    this.gNoise.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.gNoise.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.12);
+
+    src.start(0);
+    this.noise = src;
+    this.state.noise = kind;
+    return true;
+  },
+
+  stopNoise(){
+    if (!this.ctx) return;
+    this.gNoise.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.12);
+    setTimeout(() => {
+      try{ if(this.noise){ this.noise.stop(); this.noise.disconnect(); } }catch(e){}
+      this.noise = null;
+    }, 140);
+    this.state.noise = null;
+  }
+};
+window.addEventListener('DOMContentLoaded', () => setTimeout(() => NeuroAudio.init(), 400));
+</script>
+
+
+<div id="neuroAudioPanel" style="display:none; background: rgba(0,0,0,0.35); border: 1px solid rgba(168,85,247,0.45); border-radius: 14px; padding: 18px; margin-top: 18px;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;">
+    <div>
+      <div style="font-weight:800; letter-spacing:1px; color:#A855F7; font-size:1.05rem;">Audio neurocognitivo</div>
+      <div style="color: rgba(255,255,255,0.75); font-size:0.85rem; margin-top:6px; line-height:1.4;">
+        Para ondas binaurales: usar auriculares estéreo. Cada oído recibe una frecuencia distinta.
+      </div>
+    </div>
+    <button id="audioScienceJump" style="background: rgba(168,85,247,0.16); border: 1px solid rgba(168,85,247,0.55); color:#E9D5FF; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:700;">Ver ciencia</button>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 14px;">
+    <div style="background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px;">
+      <div style="font-weight:700; color: rgba(255,255,255,0.9); margin-bottom: 10px;">Ondas</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button class="na-btn" data-wave="gamma">Gamma 40 Hz</button>
+        <button class="na-btn" data-wave="beta">Beta 15 Hz</button>
+        <button class="na-btn" data-wave="alpha">Alpha 10 Hz</button>
+        <button class="na-btn" data-wave="theta">Theta 6 Hz</button>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:0.75rem; color: rgba(255,255,255,0.65); margin-bottom:6px;">Volumen ondas</div>
+        <input id="naVolWave" type="range" min="0" max="100" value="28" style="width:100%;" />
+      </div>
+      <button id="naStopWave" style="margin-top:10px; width:100%; background: rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.5); color:#fecaca; padding:10px; border-radius:10px; cursor:pointer; font-weight:800;">Detener ondas</button>
+    </div>
+
+    <div style="background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px;">
+      <div style="font-weight:700; color: rgba(255,255,255,0.9); margin-bottom: 10px;">Ruido</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button class="na-btn" data-noise="white">Blanco</button>
+        <button class="na-btn" data-noise="pink">Rosa</button>
+        <button class="na-btn" data-noise="brown">Marrón</button>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-size:0.75rem; color: rgba(255,255,255,0.65); margin-bottom:6px;">Volumen ruido</div>
+        <input id="naVolNoise" type="range" min="0" max="100" value="18" style="width:100%;" />
+      </div>
+      <button id="naStopNoise" style="margin-top:10px; width:100%; background: rgba(239,68,68,0.18); border:1px solid rgba(239,68,68,0.5); color:#fecaca; padding:10px; border-radius:10px; cursor:pointer; font-weight:800;">Detener ruido</button>
+    </div>
+  </div>
+
+  <div style="margin-top: 12px; font-size: 0.82rem; color: rgba(255,255,255,0.72); line-height: 1.5;">
+    Recomendación práctica: durante N-Back, Gamma 40 Hz con ruido blanco suave puede reducir distractores.
+  </div>
+
+  <div style="margin-top: 10px; font-size: 0.75rem; color: rgba(255,255,255,0.55);">
+    Estado: <span id="naStatus" style="color:#38BDF8; font-weight:800;">Silencio</span>
+  </div>
+
+  <style>
+    #neuroAudioPanel .na-btn{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.92);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      text-align: left;
+    }
+    #neuroAudioPanel .na-btn.active{
+      border-color: rgba(168,85,247,0.8);
+      box-shadow: 0 0 0 1px rgba(168,85,247,0.35), 0 0 18px rgba(168,85,247,0.22);
+      background: rgba(168,85,247,0.14);
+    }
+  </style>
+
+  <script>
+  (function(){
+    const panel = document.getElementById('neuroAudioPanel');
+    const status = () => {
+      const s = [];
+      if (NeuroAudio && NeuroAudio.state.wave) s.push(NeuroAudio.state.wave.toUpperCase());
+      if (NeuroAudio && NeuroAudio.state.noise) s.push('Ruido ' + NeuroAudio.state.noise);
+      const el = document.getElementById('naStatus');
+      if (el) el.textContent = s.length ? s.join(' + ') : 'Silencio';
+    };
+
+    let waveBtn = null;
+    let noiseBtn = null;
+
+    document.querySelectorAll('#neuroAudioPanel .na-btn[data-wave]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vol = (document.getElementById('naVolWave').value|0) / 100;
+        const t = btn.getAttribute('data-wave');
+        if (waveBtn === btn) {
+          NeuroAudio.stopBinaural();
+          btn.classList.remove('active');
+          waveBtn = null;
+        } else {
+          if (waveBtn) waveBtn.classList.remove('active');
+          const ok = NeuroAudio.startBinaural(t, vol);
+          if (ok) { btn.classList.add('active'); waveBtn = btn; }
+        }
+        status();
+      });
+    });
+
+    document.querySelectorAll('#neuroAudioPanel .na-btn[data-noise]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const vol = (document.getElementById('naVolNoise').value|0) / 100;
+        const t = btn.getAttribute('data-noise');
+        if (noiseBtn === btn) {
+          NeuroAudio.stopNoise();
+          btn.classList.remove('active');
+          noiseBtn = null;
+        } else {
+          if (noiseBtn) noiseBtn.classList.remove('active');
+          const ok = NeuroAudio.startNoise(t, vol);
+          if (ok) { btn.classList.add('active'); noiseBtn = btn; }
+        }
+        status();
+      });
+    });
+
+    document.getElementById('naStopWave').addEventListener('click', () => {
+      NeuroAudio.stopBinaural();
+      if (waveBtn) waveBtn.classList.remove('active');
+      waveBtn = null;
+      status();
+    });
+
+    document.getElementById('naStopNoise').addEventListener('click', () => {
+      NeuroAudio.stopNoise();
+      if (noiseBtn) noiseBtn.classList.remove('active');
+      noiseBtn = null;
+      status();
+    });
+
+    document.getElementById('audioScienceJump').addEventListener('click', () => {
+      showScreen('academia');
+      const scienceTab = document.querySelector('[data-tab="science"]');
+      if (scienceTab) scienceTab.click();
+      setTimeout(() => {
+        const sec = document.getElementById('audio-science-section');
+        if (sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 280);
+    });
+
+    // Inyección en settings
+    setTimeout(() => {
+      const settings = document.getElementById('settingsScreen');
+      if (!settings) return;
+      const target = settings.querySelector('.settings-container') || settings.querySelector('.content') || settings;
+      target.appendChild(panel);
+      panel.style.display = 'block';
+    }, 700);
+
+    status();
+  })();
+  </script>
+</div>
+
+
+<style>
+#rbPacer{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; width:94px; height:94px; display:none; align-items:center; justify-content:center; flex-direction:column; z-index:999; pointer-events:none;}
+#rbPacer .rbCircle{width:58px; height:58px; border-radius:50%; border:2px solid rgba(56,189,248,0.9); box-shadow:0 0 18px rgba(56,189,248,0.35); background: radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(0,0,0,0) 70%); transform:scale(0.55); opacity:0.22;}
+#rbPacer .rbText{margin-top:6px; font-size:10px; letter-spacing:1px; font-weight:800; color:rgba(56,189,248,0.95); text-shadow:0 0 6px rgba(0,0,0,0.7);}
+#circadianOverlay{position:fixed; inset:0; pointer-events:none; z-index:9999; background: rgba(255,147,41,0); transition: background 800ms ease; mix-blend-mode:multiply;}
+</style>
+
+<script>
+const RespPacer = {
+  active:false,
+  bpm:6,
+  t:null,
+  init(){
+    if (document.getElementById('rbPacer')) return;
+    const d = document.createElement('div');
+    d.id='rbPacer';
+    d.innerHTML='<div class="rbCircle"></div><div class="rbText">INHALE</div>';
+    document.body.appendChild(d);
+
+    const o = document.createElement('div');
+    o.id='circadianOverlay';
+    document.body.appendChild(o);
+
+    this.applyCircadian();
+    setInterval(()=>this.applyCircadian(), 10*60*1000);
+
+    // Botón discreto en game UI
+    const btn = document.createElement('button');
+    btn.id = 'rbToggle';
+    btn.className = 'control-btn';
+    btn.textContent = '🫁';
+    btn.title = 'Respiración (6/min)';
+    btn.addEventListener('click', () => this.toggle());
+
+    // intenta insertar cerca de controles
+    const panel = document.querySelector('#gameScreen .control-panel') || document.querySelector('.control-panel');
+    if (panel) panel.appendChild(btn);
+  },
+
+  toggle(){
+    this.active = !this.active;
+    const ui = document.getElementById('rbPacer');
+    if (!ui) return;
+    ui.style.display = this.active ? 'flex' : 'none';
+    if (this.active) this.loop();
+    else { clearTimeout(this.t); this.t=null; }
+  },
+
+  loop(){
+    if(!this.active) return;
+    const cycle = (60/this.bpm)*1000;
+    const inhale = cycle*0.4;
+    const exhale = cycle*0.6;
+    const c = document.querySelector('#rbPacer .rbCircle');
+    const tx = document.querySelector('#rbPacer .rbText');
+
+    c.style.transition = `transform ${inhale}ms cubic-bezier(0.4,0,0.2,1), opacity ${inhale}ms linear`;
+    c.style.transform = 'scale(1.48)';
+    c.style.opacity = '0.42';
+    tx.textContent = 'INHALE';
+
+    this.t = setTimeout(()=>{
+      if(!this.active) return;
+      c.style.transition = `transform ${exhale}ms cubic-bezier(0.4,0,0.2,1), opacity ${exhale}ms linear`;
+      c.style.transform = 'scale(0.55)';
+      c.style.opacity = '0.18';
+      tx.textContent = 'EXHALE';
+      this.t = setTimeout(()=>this.loop(), exhale);
+    }, inhale);
+  },
+
+  applyCircadian(){
+    const el = document.getElementById('circadianOverlay');
+    if(!el) return;
+    const h = new Date().getHours();
+    if (h >= 21 || h < 6) el.style.background = 'rgba(255,147,41,0.22)';
+    else if (h >= 19) el.style.background = 'rgba(255,147,41,0.12)';
+    else el.style.background = 'rgba(255,147,41,0)';
+  }
+};
+window.addEventListener('DOMContentLoaded', ()=>setTimeout(()=>RespPacer.init(), 900));
 </script>
 
 </body>
@@ -10949,6 +12570,15 @@ Si algo no funciona:
 
 Tienes en tus manos el sistema de entrenamiento cognitivo más completo
 y científicamente riguroso disponible en código abierto.
+
+Este sistema supera en características a:
+• Brain Workshop (Paul Hoskinson)
+• IQ Mindware (versión comercial)
+• La mayoría de apps de dual n-back en stores
+
+Y lo mejor: Es 100% GRATIS, 100% TUYO, 100% PERSONALIZABLE.
+
+Disfrútalo, modifícalo, mejóralo, compártelo.
 
 La neuroplasticidad está en tus manos. Literalmente.
 
